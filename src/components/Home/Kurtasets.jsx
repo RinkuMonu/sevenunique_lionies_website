@@ -6,7 +6,7 @@ import { FaRegHeart } from "react-icons/fa";
 const trends = [
   {
     id: 1,
-    image: '../images/1kurta.webp',
+    image: '../images/D11.webp',
     name: 'Fleece Hoodie',
     price: '₹89',
     rating: 4.8,
@@ -14,7 +14,7 @@ const trends = [
   },
   {
     id: 2,
-    image: '../images/2kurta.webp',
+    image: '../images/D12.webp',
     name: 'Embroidered Dress',
     price: '₹129',
     rating: 4.7,
@@ -22,7 +22,7 @@ const trends = [
   },
   {
     id: 3,
-    image: '../images/3kurta.webp',
+    image: '../images/D13.webp',
     name: 'Modal-blend Top',
     price: '₹13.00 - ₹30.00',
     rating: 4.9,
@@ -30,7 +30,7 @@ const trends = [
   },
   {
     id: 4,
-    image: '../images/4kurta.webp',
+    image: '../images/D14.webp',
     name: 'Model Tshirt',
     price: '₹59',
     rating: 4.6,
@@ -38,7 +38,7 @@ const trends = [
   },
   {
     id: 5,
-    image: '../images/1kurta.webp',
+    image: '../images/D11.webp',
     name: 'Fleece Hoodie',
     price: '₹89',
     rating: 4.8,
@@ -46,7 +46,7 @@ const trends = [
   },
   {
     id: 6,
-    image: '../images/2kurta.webp',
+    image: '../images/D12.webp',
     name: 'Embroidered Dress',
     price: '₹129',
     rating: 4.7,
@@ -54,7 +54,7 @@ const trends = [
   },
   {
     id: 7,
-    image: '../images/3kurta.webp',
+    image: '../images/D13.webp',
     name: 'Modal-blend Top',
     price: '₹13.00 - ₹30.00',
     rating: 4.9,
@@ -62,7 +62,7 @@ const trends = [
   },
   {
     id: 8,
-    image: '../images/4kurta.webp',
+    image: '../images/D14.webp',
     name: 'Model Tshirt',
     price: '₹59',
     rating: 4.6,
@@ -70,17 +70,17 @@ const trends = [
   },
 ]
 
-export default function KurtaSets() {
+export default function DesignerShirts() {
   return (
     <section className="py-16 bg-linear-to-b from-white via-gray-50 to-white">
       <div className="max-w-7xl mx-auto px-6">
       <div className="flex items-center justify-between mb-8">
           <div>
             <h2 className="text-2xl md:text-3xl font-bold text-gray-900">
-              Kurta Sets
+              Designer Shirts 
             </h2>
             <span className="text-sm text-gray-500">
-              Browse Popular Kurta
+              Browse Popular Shirts
             </span>
           </div>
           <button className="text-[#633426] font-semibold text-sm hover:text-orange-600 transition">
