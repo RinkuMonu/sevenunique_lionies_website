@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import {
   FiTruck,
@@ -21,6 +21,27 @@ export default function Header() {
   const [cartOpen, setCartOpen] = useState(false);
   const [showAllMenu, setShowAllMenu] = useState(false);
   const [openAccordion, setOpenAccordion] = useState(null);
+
+  // 🔥 NEW: scroll-based hide state
+  const [hideCategoryIcons, setHideCategoryIcons] = useState(false);
+  const [lastScrollY, setLastScrollY] = useState(0);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const current = window.scrollY;
+
+      if (current > lastScrollY && current > 80) {
+        setHideCategoryIcons(true); // scrolling down
+      } else {
+        setHideCategoryIcons(false); // scrolling up
+      }
+
+      setLastScrollY(current);
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [lastScrollY]);
 
   const menCategoryData = {
     highlights: [
@@ -61,40 +82,30 @@ export default function Header() {
 
   return (
     <>
-      <header className="w-full border-b border-gray-200">
-        {/* Top bar - responsive */}
-        <div className="hidden md:flex items-center justify-between px-6 py-3 bg-black text-white text-xs">
-          <div className="flex items-center space-x-6">
-            <span className="flex items-center gap-1">
-              <FiTruck /> Free Shipping
-            </span>
-            <span className="flex items-center gap-1">
-              <FiRotateCcw /> Return To Store
-            </span>
-            <span className="flex items-center gap-1">
-              <FiGift /> Online Gift Card
-            </span>
-          </div>
-          <div className="flex items-center space-x-6">
-            <span className="flex items-center gap-1">
-              <FiMapPin /> Delivering To
-            </span>
-            <Link to="#">Download Our Apps</Link>
-            <Link to="#">Store Locator</Link>
-            <Link to="#">Help</Link>
-          </div>
+      {/* Top bar */}
+      <div className="hidden md:flex items-center justify-between px-6 py-3 bg-black text-white text-xs">
+        <div className="flex items-center space-x-6">
+          <span className="flex items-center gap-1"><FiTruck /> Free Shipping</span>
+          <span className="flex items-center gap-1"><FiRotateCcw /> Return To Store</span>
+          <span className="flex items-center gap-1"><FiGift /> Online Gift Card</span>
         </div>
+        <div className="flex items-center space-x-6">
+          <span className="flex items-center gap-1"><FiMapPin /> Delivering To</span>
+          <Link to="#">Download Our Apps</Link>
+          <Link to="#">Store Locator</Link>
+          <Link to="#">Help</Link>
+        </div>
+      </div>
 
-        {/* Main header row - NO HAMBURGER */}
-        <div className="flex items-center justify-between gap-4 px-4 py-4 sm:px-6 lg:gap-6">
-          <Link
-            to="/"
-            className="bg-[#d6b28a] text-white font-black text-xl sm:text-2xl px-3 py-2 lowercase shrink-0"
-          >
+      {/* Sticky Header */}
+      <header className="sticky top-0 z-50 bg-white border-b">
+        {/* Main header row */}
+        <div className="flex items-center justify-between gap-4 px-4 py-4 sm:px-6">
+          <Link to="/" className="bg-[#d6b28a] text-white font-black text-xl px-3 py-2 lowercase">
             LIONIES
           </Link>
 
-          <div className="flex-1 mx-4 sm:mx-0">
+          <div className="flex-1 mx-4">
             <input
               type="text"
               placeholder="What are you looking for?"
@@ -102,11 +113,10 @@ export default function Header() {
             />
           </div>
 
-          <div className="flex items-center gap-4 text-sm lg:gap-6">
-            {/* NO HAMBURGER - Only icons */}
-            <Link to={"/whishlist"} className="flex flex-col items-center">
+          <div className="flex items-center gap-4 text-sm">
+            <Link to="/whishlist" className="flex flex-col items-center">
               <FiHeart size={18} />
-              <span className="hidden sm:block lg:inline">Wishlist</span>
+              <span className="hidden sm:block">Wishlist</span>
             </Link>
 
             <CartTrigger onOpen={() => setCartOpen(true)} />

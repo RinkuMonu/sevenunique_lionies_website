@@ -1,14 +1,106 @@
-import React from 'react'
-import { Link } from 'react-router-dom'
+import React, { useState } from "react";
+import { Link } from "react-router-dom";
+import { FaRegCopyright } from "react-icons/fa";
 import { FaArrowRight } from "react-icons/fa6";
 import { FiPhone, FiMail } from "react-icons/fi";
 import { FaInstagram, FaLinkedinIn, FaGithub } from "react-icons/fa";
 import { FaXTwitter } from "react-icons/fa6";
 
-
 export default function Footer() {
+  const [email, setEmail] = useState("");
+
   return (
-    <footer className="">
+    <>
+      {/* ================= WHITE FOOTER ================= */}
+      <footer className="bg-white text-[#212121] pt-16 pb-6 border-y border-gray-200">
+        <div className="max-w-7xl mx-auto px-6">
+
+          {/* Newsletter + Apps */}
+          <div className="py-16 border-b border-gray-200">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+
+              <div>
+                <h3 className="text-3xl font-semibold mb-4">
+                  Subscribe to our awesome emails.
+                </h3>
+                <p className="text-md text-gray-500 mb-4">
+                  Get our latest offers and news straight in your inbox.
+                </p>
+
+                <div className="flex max-w-md overflow-hidden">
+                  <input
+                    type="email"
+                    placeholder="Please enter an email address"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="w-full px-6 py-4 outline-none bg-[#f5f5f5]"
+                  />
+                  <button
+                    onClick={() => {
+                      if (!email) return alert("Please enter your email");
+                      window.location.href = `mailto:support@driptees.com?subject=Newsletter Subscription&body=My email is: ${email}`;
+                    }}
+                    className="bg-black text-white px-9"
+                  >
+                    Subscribe
+                  </button>
+                </div>
+              </div>
+
+              <div>
+                <h3 className="text-3xl font-semibold mb-4">
+                  Enjoy our amazing apps
+                </h3>
+                <p className="text-md text-gray-500 mb-4">
+                  Shop our products and offers on-the-go.
+                </p>
+
+                <div className="flex gap-4 mt-4">
+                  <img src="/image/app1.png" className="w-40 cursor-pointer" />
+                  <img src="/image/app2.png" className="w-40 cursor-pointer" />
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          {/* Category Grid */}
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-8 mt-12 text-sm text-gray-600">
+
+            {[
+              ["Categories", ["Jeans", "Casual Shirt", "T-Shirt", "Co-ord Set", "Shorts", "Blazer", "Hoodie", "Cargo", "Coats"]],
+              ["Pants", ["Trouser", "Bootcut", "Gurkha", "Lower", "Cargo", "Loose Fit", "Slim Fit"]],
+              ["Jeans", ["Cargo", "Six Pocket", "Boot Cut", "Straight", "Baggy", "Slim Fit"]],
+              ["Shirt", ["Floral", "Stripes", "Checks"]],
+              ["T-Shirt", ["Polo", "Round Neck"]],
+            ].map(([title, items], i) => (
+              <div key={i}>
+                <h4 className="font-semibold mb-4 text-black">{title}</h4>
+                <ul className="space-y-2">
+                  {items.map((item, idx) => (
+                    <li key={idx}>
+                      <Link to="/" className="hover:text-black">{item}</Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+
+          {/* Bottom */}
+          <div className="border-t mt-10 pt-6 flex flex-col md:flex-row justify-between items-center text-sm text-gray-500">
+            <p className="flex items-center gap-1">
+              <FaRegCopyright /> 2023 Biztek. All Rights Reserved.
+            </p>
+            <div className="flex gap-6 mt-3 md:mt-0">
+              <Link to="/">Make an Enquiry</Link>
+              <Link to="/">Terms & Conditions</Link>
+            </div>
+          </div>
+
+        </div>
+      </footer>
+<footer className="">
       <div className="relative  px-4  bg-[url('/image/footer-img2.jpeg')] bg-cover bg-center w-full overflow-hidden">
 
         <div className="absolute inset-0 rounded-lg bg-black/70"></div>
@@ -143,5 +235,6 @@ export default function Footer() {
 
       </div>
     </footer>
-  )
+    </>
+  );
 }
