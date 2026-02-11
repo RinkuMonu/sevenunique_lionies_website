@@ -6,9 +6,11 @@ import Delivery from "../components/cart/Delivery.jsx";
 const CheckoutPage = () => {
   const [cart, setCart] = useState([
     { id: 1, name: "DR CRZ Jacket", price: 235, qty: 1, image:  "../extra/wo1.png"},
-    { id: 2, name: "Look Cream Sneakers", price: 397, qty: 1, image: "../extra/sneak1.png" },
+    { id: 2, name: "Solid White Graphic Tee", price: 397, qty: 1, image: "/image/tee1.jpg" },
   ]);
 
+
+  
   const [coupon, setCoupon] = useState("");
   const [discount, setDiscount] = useState(0);
   const [couponApplied, setCouponApplied] = useState(false);
@@ -72,7 +74,7 @@ const CheckoutPage = () => {
           <div className="flex justify-center gap-6 mb-8 text-sm font-semibold">
             <span className="text-gray-400">BAG</span>
             <span className="text-gray-400">----------</span>
-            <span className="text-[#633426]">ADDRESS</span>
+            <span className="text-[#927f68]">ADDRESS</span>
             <span className="text-gray-400">----------</span>
             <span className="text-gray-400">PAYMENT</span>
           </div>
@@ -165,7 +167,7 @@ const CheckoutPage = () => {
                   <span>${total.toFixed(2)}</span>
                 </div>
 
-                <button className="w-full bg-[#633426] text-white py-3 rounded-full mt-5 hover:opacity-90">
+                <button className="w-full bg-[#927f68] text-white py-3 rounded-full mt-5 hover:opacity-90">
                   PLACE ORDER
                 </button>
 
