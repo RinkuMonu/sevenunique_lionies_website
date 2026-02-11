@@ -76,7 +76,7 @@ const Address = () => {
                     <button
                         type="button"
                         onClick={() => setShowNewForm(true)}
-                        className="w-full border-2 border-dashed border-gray-300 rounded-xl py-3 text-sm font-medium hover:border-[#633426] transition cursor-pointer"
+                        className="w-full border-2 border-dashed border-gray-300 rounded-xl py-3 text-sm font-medium hover:border-[#927f68] transition cursor-pointer"
                     >
                         + Add New Address
                     </button>
@@ -120,7 +120,7 @@ const Address = () => {
                     <div className="flex gap-2">
   <button
     type="button"
-    className="bg-[#633426] text-white px-3 py-1.5 text rounded-lg hover:opacity-90 transition cursor-pointer"
+    className="bg-[#927f68] text-white px-3 py-1.5 text rounded-lg hover:opacity-90 transition cursor-pointer"
   >
     Save Address
   </button>
@@ -145,7 +145,7 @@ const Address = () => {
                         onClick={() => setActiveBadge(item)}
                         className={`px-3 py-1 text-xs rounded-full cursor-pointer transition
         ${activeBadge === item
-                                ? "border border-[#633426] bg-[#633426] text-white"
+                                ? "border border-[#927f68] bg-[#927f68] text-white"
                                 : "border border-gray-300 text-gray-600 hover:border-black hover:text-black"
                             }`}
                     >
