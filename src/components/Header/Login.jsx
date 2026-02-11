@@ -1,20 +1,70 @@
 import { useState } from "react";
 import { X } from "lucide-react";
+import api from "../service/axios";
+import { useAuth } from "../service/AuthContext";
 
 export default function LoginModal({ isOpen, onClose }) {
+  const { setUser } = useAuth();
   const [step, setStep] = useState("phone");
   const [phone, setPhone] = useState("");
   const [otp, setOtp] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   if (!isOpen) return null;
 
   const handlePhoneChange = (e) => {
-    const value = e.target.value.replace(/\D/g, "");
+    let value = e.target.value.replace(/\D/g, "");
+    if (value.length === 1 && !/[6-9]/.test(value)) return;
     if (value.length <= 10) setPhone(value);
   };
 
   const isValidPhone = phone.length === 10;
 
+  const sendOtp = async () => {
+    try {
+      setLoading(true);
+      setError("");
+
+      const ress = await api.post("/otp/send", { mobile: phone });
+      console.log("otp send res", ress);
+      if (ress.data.success) {
+        setStep("otp");
+      }
+    } catch (err) {
+      setError(err.response?.data?.message || "Failed to send OTP");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const verifyOtp = async () => {
+    if (!otp.length === 6) {
+      setError("please enter 6 digit OTP");
+    }
+    try {
+      setLoading(true);
+      setError("");
+
+      const res = await api.post("/auth/verifyotp", {
+        mobile: phone,
+        otp: Number(otp),
+      });
+      console.log("res form login",res)
+
+      if (res.data.token) {
+        localStorage.setItem("token", res.data.token);
+        localStorage.setItem("user", JSON.stringify(res.data.user));
+        setUser(res.data);
+      }
+      setStep("phone");
+      onClose();
+    } catch (err) {
+      setError(err.response?.data?.message || "Invalid OTP");
+    } finally {
+      setLoading(false);
+    }
+  };
   return (
     <>
       {/* Overlay */}
@@ -59,23 +109,24 @@ export default function LoginModal({ isOpen, onClose }) {
                 className="w-full border rounded-xl px-4 py-3 mb-2 outline-none"
               />
 
-              {!isValidPhone && phone.length > 0 && (
+              {phone.length > 0 && !isValidPhone && (
                 <p className="text-xs text-red-500 mb-3">
-                  Enter a valid 10-digit mobile number
+                  Mobile must start with 6–9 and be 10 digits
                 </p>
               )}
+              {error && <p className="text-xs text-red-500 mb-3">{error}</p>}
 
               <button
-                disabled={!isValidPhone}
-                onClick={() => setStep("otp")}
-                className={`w-full py-3 rounded-xl text-white font-semibold transition
+                disabled={!isValidPhone || loading}
+                onClick={sendOtp}
+                className={`w-full py-3 rounded-xl text-white font-semibold cursor-pointer
                   ${
                     isValidPhone
-                      ? "bg-[#927f68] hover:opacity-90"
+                      ? "bg-[#927f68]"
                       : "bg-gray-300 cursor-not-allowed"
                   }`}
               >
-                Send OTP
+                {loading ? "Sending OTP..." : "Send OTP"}
               </button>
             </>
           )}
@@ -91,16 +142,22 @@ export default function LoginModal({ isOpen, onClose }) {
                 maxLength={6}
                 className="w-full border rounded-xl px-4 py-3 mb-4 outline-none text-center tracking-widest"
               />
+              {error && <p className="text-xs text-red-500 mb-3">{error}</p>}
 
               <button
-                className="w-full py-3 rounded-xl font-semibold bg-[#5fefdd] text-black"
+                onClick={verifyOtp}
+                disabled={otp.length !== 6 || loading}
+                className="w-full py-3 rounded-xl font-semibold bg-[#5fefdd] cursor-pointer"
               >
-                Verify & Login
+                {loading ? "Verifying..." : "Verify & Login"}
               </button>
 
               <button
-                onClick={() => setStep("phone")}
-                className="block text-sm text-gray-500 mx-auto mt-4"
+                onClick={() => {
+                  setStep("phone");
+                  setOtp("");
+                }}
+                className="block text-sm text-gray-500 mx-auto mt-4 cursor-pointer"
               >
                 Change number
               </button>
