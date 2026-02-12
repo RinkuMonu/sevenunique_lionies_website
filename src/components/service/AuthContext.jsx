@@ -5,6 +5,7 @@ const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
+  const [token, settoken] = useState(null);
   const [loading, setLoading] = useState(true);
   const [loginOpen, setLoginOpen] = useState(false);
   const [pareantcategory, setPareantcategory] = useState([]);
@@ -25,6 +26,7 @@ export const AuthProvider = ({ children }) => {
     const token = localStorage.getItem("token");
     if (!token) {
       setLoading(false);
+      settoken(token);
       return;
     }
     const fetchMe = async () => {
@@ -41,7 +43,7 @@ export const AuthProvider = ({ children }) => {
     };
 
     fetchMe();
-  }, []);
+  }, [token]);
   useEffect(() => {
     const parentCate = async () => {
       try {
@@ -66,6 +68,7 @@ export const AuthProvider = ({ children }) => {
         loginOpen,
         setLoginOpen,
         pareantcategory,
+        settoken
       }}
     >
       {children}
