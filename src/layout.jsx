@@ -9,7 +9,7 @@ export default function Layout() {
       <Header />
 
       {/* Scrollable Content */}
-      <main className="flex-1 overflow-y-auto">
+      <main className="flex-1">
         <Outlet />
       </main>
 
