@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { FiGrid, FiList, FiChevronDown, FiSearch } from "react-icons/fi";
 import { BsCart } from "react-icons/bs";
+import { CiFilter } from "react-icons/ci";
 
 const ProductListingPage = () => {
   const title = "T-Shirts";
@@ -187,6 +188,366 @@ const ProductListingPage = () => {
       sleeves: "Long",
       neck: "Round",
     },
+    {
+      id: 1,
+      img: "../images/similar1.png",
+      hoverImg: "../images/similarback1.png",
+      name: `${title} Classic`,
+      price: 999,
+      size: "M",
+      category: "Hooded T-Shirts",
+      theme: "Batman",
+      rating: 4.5,
+      discount: 10,
+      fabric: "Cotton",
+      color: "Black",
+      design: "Graphic",
+      fit: "Regular",
+      sleeves: "Short",
+      neck: "Round",
+    },
+    {
+      id: 2,
+      img: "../images/similar2.png",
+      hoverImg: "../images/similarback2.jpeg",
+      name: `${title} Premium`,
+      price: 1299,
+      size: "L",
+      category: "Men Co-Ord Sets",
+      theme: "Attack On Titan",
+      rating: 4.2,
+      discount: 15,
+      fabric: "Polyester",
+      color: "Grey",
+      design: "Printed",
+      fit: "Slim",
+      sleeves: "Long",
+      neck: "V-Neck",
+    },
+    {
+      id: 3,
+      img: "../images/similar3.png",
+      hoverImg: "../images/similarback3.png",
+      name: `${title} Street`,
+      price: 1499,
+      size: "S",
+      category: "Oversized Polos",
+      theme: "5 Star",
+      rating: 4.8,
+      discount: 5,
+      fabric: "Cotton",
+      color: "White",
+      design: "Plain",
+      fit: "Oversized",
+      sleeves: "Short",
+      neck: "Polo",
+    },
+    {
+      id: 4,
+      img: "../images/similar4.png",
+      hoverImg: "../images/similarback4.png",
+      name: `${title} Street`,
+      price: 1599,
+      size: "XL",
+      category: "Oversized T-Shirts",
+      theme: "Avatar",
+      rating: 4.1,
+      discount: 20,
+      fabric: "Cotton Blend",
+      color: "Blue",
+      design: "Graphic",
+      fit: "Regular",
+      sleeves: "Short",
+      neck: "Round",
+    },
+    {
+      id: 5,
+      img: "../images/similar5.png",
+      hoverImg: "../images/similarback5.png",
+      name: `${title} Street`,
+      price: 1799,
+      size: "M",
+      category: "Oversized T-Shirts",
+      theme: "Batman",
+      rating: 4.7,
+      discount: 8,
+      fabric: "Cotton",
+      color: "Red",
+      design: "Printed",
+      fit: "Slim",
+      sleeves: "Short",
+      neck: "Crew",
+    },
+    {
+      id: 6,
+      img: "../images/similar1.png",
+      hoverImg: "../images/similarback6.png",
+      name: `${title} Street`,
+      price: 899,
+      size: "S",
+      category: "Hooded T-Shirts",
+      theme: "5 Star",
+      rating: 4.3,
+      discount: 12,
+      fabric: "Fleece",
+      color: "Navy",
+      design: "Plain",
+      fit: "Regular",
+      sleeves: "Long",
+      neck: "Round",
+    },
+    {
+      id: 7,
+      img: "../images/similar2.png",
+      hoverImg: "../images/similarback7.png",
+      name: `${title} Street`,
+      price: 1999,
+      size: "XXL",
+      category: "Oversized Polos",
+      theme: "Avatar",
+      rating: 4.6,
+      discount: 25,
+      fabric: "Pima Cotton",
+      color: "Green",
+      design: "Graphic",
+      fit: "Oversized",
+      sleeves: "Short",
+      neck: "Polo",
+    },
+    {
+      id: 8,
+      img: "../images/similar3.png",
+      hoverImg: "../images/similarback1.png",
+      name: `${title} Street`,
+      price: 1099,
+      size: "L",
+      category: "Men Co-Ord Sets",
+      theme: "Attack On Titan",
+      rating: 4.4,
+      discount: 18,
+      fabric: "Cotton",
+      color: "Black",
+      design: "Printed",
+      fit: "Slim",
+      sleeves: "Short",
+      neck: "V-Neck",
+    },
+    {
+      id: 9,
+      img: "../images/similar4.png",
+      hoverImg: "../images/similarback2.jpeg",
+      name: `${title} Street`,
+      price: 1399,
+      size: "XL",
+      category: "Oversized T-Shirts",
+      theme: "Batman",
+      rating: 4.9,
+      discount: 7,
+      fabric: "Organic Cotton",
+      color: "White",
+      design: "Graphic",
+      fit: "Regular",
+      sleeves: "Long",
+      neck: "Round",
+    },
+    {
+      id: 10,
+      img: "../images/similar5.png",
+      hoverImg: "../images/similarback3.png",
+      name: `${title} Street`,
+      price: 1899,
+      size: "XXL",
+      category: "Oversized T-Shirts",
+      theme: "Batman",
+      rating: 4.9,
+      discount: 7,
+      fabric: "Organic Cotton",
+      color: "White",
+      design: "Graphic",
+      fit: "Regular",
+      sleeves: "Long",
+      neck: "Round",
+    },
+    {
+      id: 11,
+      img: "../images/similar1.png",
+      hoverImg: "../images/similarback1.png",
+      name: `${title} Classic`,
+      price: 999,
+      size: "M",
+      category: "Hooded T-Shirts",
+      theme: "Batman",
+      rating: 4.5,
+      discount: 10,
+      fabric: "Cotton",
+      color: "Black",
+      design: "Graphic",
+      fit: "Regular",
+      sleeves: "Short",
+      neck: "Round",
+    },
+    {
+      id: 12,
+      img: "../images/similar2.png",
+      hoverImg: "../images/similarback2.jpeg",
+      name: `${title} Premium`,
+      price: 1299,
+      size: "L",
+      category: "Men Co-Ord Sets",
+      theme: "Attack On Titan",
+      rating: 4.2,
+      discount: 15,
+      fabric: "Polyester",
+      color: "Grey",
+      design: "Printed",
+      fit: "Slim",
+      sleeves: "Long",
+      neck: "V-Neck",
+    },
+    {
+      id: 13,
+      img: "../images/similar3.png",
+      hoverImg: "../images/similarback3.png",
+      name: `${title} Street`,
+      price: 1499,
+      size: "S",
+      category: "Oversized Polos",
+      theme: "5 Star",
+      rating: 4.8,
+      discount: 5,
+      fabric: "Cotton",
+      color: "White",
+      design: "Plain",
+      fit: "Oversized",
+      sleeves: "Short",
+      neck: "Polo",
+    },
+    {
+      id: 14,
+      img: "../images/similar4.png",
+      hoverImg: "../images/similarback4.png",
+      name: `${title} Street`,
+      price: 1599,
+      size: "XL",
+      category: "Oversized T-Shirts",
+      theme: "Avatar",
+      rating: 4.1,
+      discount: 20,
+      fabric: "Cotton Blend",
+      color: "Blue",
+      design: "Graphic",
+      fit: "Regular",
+      sleeves: "Short",
+      neck: "Round",
+    },
+    {
+      id: 15,
+      img: "../images/similar5.png",
+      hoverImg: "../images/similarback5.png",
+      name: `${title} Street`,
+      price: 1799,
+      size: "M",
+      category: "Oversized T-Shirts",
+      theme: "Batman",
+      rating: 4.7,
+      discount: 8,
+      fabric: "Cotton",
+      color: "Red",
+      design: "Printed",
+      fit: "Slim",
+      sleeves: "Short",
+      neck: "Crew",
+    },
+    {
+      id: 16,
+      img: "../images/similar1.png",
+      hoverImg: "../images/similarback6.png",
+      name: `${title} Street`,
+      price: 899,
+      size: "S",
+      category: "Hooded T-Shirts",
+      theme: "5 Star",
+      rating: 4.3,
+      discount: 12,
+      fabric: "Fleece",
+      color: "Navy",
+      design: "Plain",
+      fit: "Regular",
+      sleeves: "Long",
+      neck: "Round",
+    },
+    {
+      id: 17,
+      img: "../images/similar2.png",
+      hoverImg: "../images/similarback7.png",
+      name: `${title} Street`,
+      price: 1999,
+      size: "XXL",
+      category: "Oversized Polos",
+      theme: "Avatar",
+      rating: 4.6,
+      discount: 25,
+      fabric: "Pima Cotton",
+      color: "Green",
+      design: "Graphic",
+      fit: "Oversized",
+      sleeves: "Short",
+      neck: "Polo",
+    },
+    {
+      id: 18,
+      img: "../images/similar3.png",
+      hoverImg: "../images/similarback1.png",
+      name: `${title} Street`,
+      price: 1099,
+      size: "L",
+      category: "Men Co-Ord Sets",
+      theme: "Attack On Titan",
+      rating: 4.4,
+      discount: 18,
+      fabric: "Cotton",
+      color: "Black",
+      design: "Printed",
+      fit: "Slim",
+      sleeves: "Short",
+      neck: "V-Neck",
+    },
+    {
+      id: 19,
+      img: "../images/similar4.png",
+      hoverImg: "../images/similarback2.jpeg",
+      name: `${title} Street`,
+      price: 1399,
+      size: "XL",
+      category: "Oversized T-Shirts",
+      theme: "Batman",
+      rating: 4.9,
+      discount: 7,
+      fabric: "Organic Cotton",
+      color: "White",
+      design: "Graphic",
+      fit: "Regular",
+      sleeves: "Long",
+      neck: "Round",
+    },
+    {
+      id: 20,
+      img: "../images/similar5.png",
+      hoverImg: "../images/similarback3.png",
+      name: `${title} Street`,
+      price: 1899,
+      size: "XXL",
+      category: "Oversized T-Shirts",
+      theme: "Batman",
+      rating: 4.9,
+      discount: 7,
+      fabric: "Organic Cotton",
+      color: "White",
+      design: "Graphic",
+      fit: "Regular",
+      sleeves: "Long",
+      neck: "Round",
+    },
   ];
 
   const [viewMode, setViewMode] = useState("grid");
@@ -202,7 +563,24 @@ const ProductListingPage = () => {
   const [selectedFabric, setSelectedFabric] = useState("");
   const [priceRange, setPriceRange] = useState("");
   const [sortBy, setSortBy] = useState("");
-  const [openFilters, setOpenFilters] = useState({});
+  const [selectedNewArrivals, setSelectedNewArrivals] = useState("");
+const [selectedTopRated, setSelectedTopRated] = useState("");
+  const [openFilters, setOpenFilters] = useState({
+    subcat: true,
+    size: true,
+    color: true,
+    design: true,
+    fit: true,
+    sleeves: true,
+    neck: true,
+    type: true,
+    discounts: true,
+    rating: true,
+    fabric: true,
+    price: true,
+    new: true,
+    toprated: true,
+  });
   const [showMobileFilters, setShowMobileFilters] = useState(false);
 
   const toggleFilter = (filter) => {
@@ -250,10 +628,16 @@ const ProductListingPage = () => {
           : true) &&
         (selectedRating ? p.rating >= parseFloat(selectedRating) : true) &&
         (selectedDiscount ? p.discount >= parseInt(selectedDiscount) : true) &&
-        (selectedFabric ? p.fabric === selectedFabric : true)
+        (selectedFabric ? p.fabric === selectedFabric : true)&&
+
+        (!selectedNewArrivals || selectedNewArrivals === "new") &&
+        (!selectedTopRated || selectedTopRated === "top")
       );
     })
     .sort((a, b) => {
+      if (selectedNewArrivals === "new") return b.id - a.id;
+      if (selectedTopRated === "top") return b.rating - a.rating;
+      
       switch (sortBy) {
         case "new":
           return b.id - a.id;
@@ -269,8 +653,8 @@ const ProductListingPage = () => {
     });
 
   return (
-    <section className="min-h-screen bg-white py-8 lg:py-16">
-      <div className=" px-4 sm:px-6 lg:px-8">
+    <section className="min-h-screen bg-white py-8">
+      <div className=" px-4 sm:px-6">
         <div className="w-full h-48 sm:h-64 lg:h-80 mb-8 overflow-hidden">
           <img
             src="../images/all.webp"
@@ -391,14 +775,14 @@ const ProductListingPage = () => {
 
         <div className="flex flex-col lg:flex-row gap-8">
           <aside
-            className={`w-full sidebar lg:w-80 xl:w-96 order-2 lg:order-1 transition-all duration-300 ${showMobileFilters ? "block" : "lg:block"} lg:sticky lg:top-24 max-h-screen overflow-y-auto`}
+            className={`w-full sidebar lg:w-80 xl:w-96 order-2 lg:order-1 transition-all duration-300 ${
+              showMobileFilters ? "block" : "lg:block"
+            } lg:sticky lg:top-24 self-start`}
           >
-            <div
-              className={`bg-white p-6 lg:p-8 border border-gray-100 ${showMobileFilters ? "fixed inset-0 z-50 bg-white max-h-full overflow-y-auto" : ""}`}
-            >
+            <div className="bg-white p-6 lg:p-8 border border-gray-100  sticky lg:static top-0">
               {!showMobileFilters && (
                 <h2 className="text-3xl font-bold mb-8 text-gray-900 border-b pb-6 flex items-center gap-3">
-                  <FiChevronDown className="w-7 h-7 text-[#d18736]" />
+                  <CiFilter className="w-7 h-7 text-[#d18736]" />
                   Filters
                 </h2>
               )}
@@ -468,8 +852,16 @@ const ProductListingPage = () => {
                   title: "Price Range",
                   options: ["0-1000", "1001-1500", "1501-2000", "2001+"],
                 },
-                { id: "new", title: "New Arrivals", options: [] },
-                { id: "toprated", title: "Top Rated", options: [] },
+                {
+                  id: "new",
+                  title: "New Arrivals",
+                  options: ["Last 7 Days", "Last 30 Days", "This Month"],
+                },
+                {
+                  id: "toprated",
+                  title: "Top Rated",
+                  options: ["4 Stars & Up", "4.5 Stars & Up", "5 Stars"],
+                },
               ].map(({ id, title, options }) => (
                 <div
                   key={id}
@@ -477,7 +869,7 @@ const ProductListingPage = () => {
                 >
                   <button
                     onClick={() => toggleFilter(id)}
-                    className="w-full flex items-center justify-between py-4 px-3 hover:bg-gray-50 rounded-2xl transition-all group"
+                    className="w-full flex items-center justify-between cursor-pointer rounded-2xl transition-all group"
                   >
                     <div className="flex items-center gap-4">
                       <div
@@ -604,13 +996,7 @@ const ProductListingPage = () => {
                           </div>
                         )}
 
-                      {(id === "new" || id === "toprated") && (
-                        <div className="p-4 bg-blue-50 rounded-xl border border-blue-200">
-                          <p className="text-sm text-blue-800 font-medium">
-                            Feature coming soon!
-                          </p>
-                        </div>
-                      )}
+                     
                     </div>
                   )}
                 </div>
@@ -650,10 +1036,7 @@ const ProductListingPage = () => {
             >
               {filteredProducts.map((p) => (
                 <div key={p.id} className="group cursor-pointer">
-                  <Link
-                    to={`/checkout`}
-                    className="block overflow-hidden "
-                  >
+                  <Link to={`/checkout`} className="block overflow-hidden ">
                     <div className="relative h-64 md:h-72 lg:h-80 ">
                       <div className="absolute top-0 left-0 z-20">
                         <span className="text-white text-xs px-3 py-1.5 font-bold bg-linear-to-r from-green-500 to-green-600">
