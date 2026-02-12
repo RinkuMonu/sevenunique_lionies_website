@@ -21,27 +21,27 @@ export default function Header() {
   const [cartOpen, setCartOpen] = useState(false);
   const [showAllMenu, setShowAllMenu] = useState(false);
   const [openAccordion, setOpenAccordion] = useState(null);
+  const [hideCategoryIcons, setHideCategoryIcons] = useState(false);
+  const [isSticky, setIsSticky] = useState(false);
+
 
   // 🔥 NEW: scroll-based hide state
-  const [hideCategoryIcons, setHideCategoryIcons] = useState(false);
   const [lastScrollY, setLastScrollY] = useState(0);
 
   useEffect(() => {
     const handleScroll = () => {
-      const current = window.scrollY;
-
-      if (current > lastScrollY && current > 80) {
-        setHideCategoryIcons(true); // scrolling down
+      if (window.scrollY > 150) {
+        setIsSticky(true);
       } else {
-        setHideCategoryIcons(false); // scrolling up
+        setIsSticky(false);
       }
-
-      setLastScrollY(current);
     };
 
-    window.addEventListener("scroll", handleScroll, { passive: true });
+    window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
-  }, [lastScrollY]);
+  }, []);
+
+
 
   const menCategoryData = {
     highlights: [
@@ -70,16 +70,6 @@ export default function Header() {
     ],
   };
 
-  // const categoryIcons = {
-  //   ALL: "../images/9.webp",
-  //   Joggers: "../images/polos.avif",
-  //   Jeans: "../images/jeans2.PNG",
-  //   "T-Shirts": "../images/similarback5.png",
-  //   Shirts: "../images/shirts2.PNG",
-  //   "Treack Pents": "../images/trackpants.webp",
-  //   "Lionies Collection": "../images/14.webp",
-  // };
-
   return (
     <>
       {/* Top bar */}
@@ -98,10 +88,14 @@ export default function Header() {
       </div>
 
       {/* Sticky Header */}
-      <header className="sticky top-0 z-50 bg-white border-b">
+      <header className=" bg-white border-b">
         {/* Main header row */}
-        <div className="flex items-center justify-between gap-4 px-4 py-4 sm:px-6">
-          <Link to="/" className="bg-[#d6b28a] text-white font-black text-xl px-3 py-2 lowercase">
+        {/* Main Header Row */}
+        <div className="flex items-center justify-between gap-4 px-4 py-4 sm:px-6 bg-white">
+          <Link
+            to="/"
+            className="bg-[#d6b28a] text-white font-black text-xl px-3 py-2 lowercase"
+          >
             LIONIES
           </Link>
 
@@ -120,6 +114,7 @@ export default function Header() {
             </Link>
 
             <CartTrigger onOpen={() => setCartOpen(true)} />
+
             {user?.user ? (
               <Link
                 to="userprofile"
@@ -139,47 +134,66 @@ export default function Header() {
             )}
           </div>
         </div>
-        <div className="px-4 pb-4 pt-2 sm:px-6 md:flex md:justify-center md:gap-10 md:py-4 md:border-t md:border-gray-300 md:text-sm overflow-x-auto lg:overflow-visible">
-          {/* ALL button - ALWAYS visible */}
-          <button
-            onClick={() => setShowAllMenu(true)}
-            className="hover:underline inline-flex items-center font-semibold text-md tracking-wide cursor-pointer whitespace-nowrap px-2 py-1 shrink-0 md:flex-col md:gap-2 group"
-          >
-            <div className="w-12 h-12 bg-gray-200 rounded-full shrink-0 overflow-hidden group-hover:scale-110 transition-all duration-200 md:w-12 md:h-12">
-              <img
-                src="../images/9.webp"
-                alt="ALL"
-                className="w-full h-full object-cover"
-              />
-            </div>
-            <span className="md:mt-1">ALL</span>
-          </button>
 
-          {/* Categories - HIDDEN on mobile (lg+ only) */}
-          <div className="hidden lg:flex md:justify-center md:gap-10">
-            {pareantcategory.map((item) => (
-              <Link
-                key={item._id}
-                to={`/${item.name.replace(/\s+/g, "-")}`}
-                className="flex flex-col items-center gap-2 whitespace-nowrap px-2 py-1 shrink-0 group hover:scale-105 transition-all duration-200"
-              >
-                <div className="w-12 h-12 bg-gray-200 rounded-full overflow-hidden group-hover:scale-110 transition-all duration-200">
-                  <img
-                    src={
-                      `http://localhost:5000${item?.smallimage}` ||
-                      "../images/placeholder.png"
-                    }
-                    alt={item?.name}
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-                <span className="text-sm font-medium text-center">
-                  {item?.name}
-                </span>
-              </Link>
-            ))}
+        {/* 🔥 Sticky Categories Section */}
+        <div
+          className={`w-full bg-white border-b border-gray-300 shadow-sm transition-all duration-300 ${isSticky
+              ? "fixed top-0 md:top-0 left-0 z-50"
+              : "relative"
+            }`}
+        >
+
+          <div
+            className={`px-4 pb-4 pt-2 sm:px-6 md:flex md:justify-center md:gap-10 md:py-4 md:text-sm overflow-x-auto lg:overflow-visible transition-all duration-300 ease-in-out ${hideCategoryIcons
+              ? "opacity-0 -translate-y-full pointer-events-none"
+              : "opacity-100 translate-y-0"
+              }`}
+          >
+            {/* ALL Button */}
+            <button
+              onClick={() => setShowAllMenu(true)}
+              className="hover:underline inline-flex items-center font-semibold text-md tracking-wide cursor-pointer whitespace-nowrap px-2 py-1 shrink-0 md:flex-col md:gap-2 group"
+            >
+              <div className="w-12 h-12 bg-gray-200 rounded-full shrink-0 overflow-hidden group-hover:scale-110 transition-all duration-200 md:w-12 md:h-12">
+                <img
+                  src="../images/9.webp"
+                  alt="ALL"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <span className="md:mt-1">ALL</span>
+            </button>
+
+            {/* Categories */}
+            <div className="hidden lg:flex md:justify-center md:gap-10">
+              {pareantcategory.map((item) => (
+                <Link
+                  key={item._id}
+                  to={`/${item.name.replace(/\s+/g, "-")}`}
+                  className="flex flex-col items-center gap-2 whitespace-nowrap px-2 py-1 shrink-0 group hover:scale-105 transition-all duration-200"
+                >
+                  <div className="w-12 h-12 bg-gray-200 rounded-full overflow-hidden group-hover:scale-110 transition-all duration-200">
+                    <img
+                      src={
+                        item?.smallimage
+                          ? `http://localhost:5000${item.smallimage}`
+                          : "../images/placeholder.png"
+                      }
+                      alt={item?.name}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  <span className="text-sm font-medium text-center">
+                    {item?.name}
+                  </span>
+                </Link>
+              ))}
+            </div>
           </div>
         </div>
+        {isSticky && <div className="h-[90px]"></div>}
+
+
 
         {/* Ticker */}
         <div className="relative w-full overflow-hidden bg-linear-to-r from-[#1a1a1a] via-[#2a2a2a] to-[#1a1a1a] py-2">
@@ -212,9 +226,8 @@ export default function Header() {
           className={`fixed inset-0 z-60 ${showAllMenu ? "visible" : "invisible"}`}
         >
           <div
-            className={`absolute inset-0 bg-black/50 transition-opacity ${
-              showAllMenu ? "opacity-100" : "opacity-0"
-            }`}
+            className={`absolute inset-0 bg-black/50 transition-opacity ${showAllMenu ? "opacity-100" : "opacity-0"
+              }`}
             onClick={() => setShowAllMenu(false)}
           />
           <div
