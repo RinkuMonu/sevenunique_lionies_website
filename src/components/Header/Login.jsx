@@ -4,8 +4,9 @@ import api from "../service/axios";
 import { useAuth } from "../service/AuthContext";
 
 export default function LoginModal({ isOpen, onClose }) {
-  const { setUser } = useAuth();
-  const [step, setStep] = useState("phone");
+  const { settoken } = useAuth();
+  // const [step, setStep] = useState("phone");
+  const [step, setStep] = useState("otp");
   const [phone, setPhone] = useState("");
   const [otp, setOtp] = useState("");
   const [loading, setLoading] = useState(false);
@@ -47,15 +48,15 @@ export default function LoginModal({ isOpen, onClose }) {
       setError("");
 
       const res = await api.post("/auth/verifyotp", {
-        mobile: phone,
+        // mobile: phone,
+        mobile: 8003767732,
         otp: Number(otp),
       });
-      console.log("res form login",res)
 
-      if (res.data.token) {
-        localStorage.setItem("token", res.data.token);
-        localStorage.setItem("user", JSON.stringify(res.data.user));
-        setUser(res.data);
+      if (res.data?.token) {
+        localStorage.setItem("token", res.data?.token);
+        settoken(res.data?.token);
+        localStorage.setItem("user", JSON.stringify(res.data?.user));
       }
       setStep("phone");
       onClose();
