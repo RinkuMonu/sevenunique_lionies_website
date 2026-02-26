@@ -96,9 +96,9 @@ export default function Footer() {
                 <h4 className="mb-4 font-semibold">Resources</h4>
                 <ul className="space-y-3 text-sm">
                   <Link to="/"><li className='pb-3'>Home</li></Link>
-                  <Link to="/"><li className='pb-3'>FAQs</li></Link>
+                  <Link to="/faq"><li className='pb-3'>FAQs</li></Link>
                   <Link to="/"><li className='pb-3'>Contact</li></Link>
-                  <Link to="/"><li className='pb-3'>Products</li></Link>
+                  <Link to="/productlist"><li className='pb-3'>Products</li></Link>
                 </ul>
               </div>
               <div className="lg:col-span-2 space-y-6">

@@ -13,6 +13,8 @@ import ProductListingPage from "./components/ProductListingPage.jsx";
 import CheckoutPage from "./components/Checkout.jsx";
 import { AddProductWithVariant } from "./components/admin/addProduct.jsx";
 import ProductDetailPage from "./pages/Productdetail.jsx";
+import PartnerPage from "./pages/Partner.jsx";
+import Faq from "./pages/Faq.jsx";
 
 function App() {
   return (
@@ -26,13 +28,14 @@ function App() {
         <Route path="cart" element={<LoginModal />} />
         <Route path="productlist" element={<ProductListingPage />} />
         <Route path="productdetail" element={<ProductDetailPage />} />
+        <Route path="product/:id" element={<ProductDetailPage />} />
         <Route path="checkout" element={<CheckoutPage />} />
         <Route path="privacy" element={<PrivacyPolicy />} />
         <Route path="terms" element={<TermsConditions />} />
         <Route path="refund" element={<RefundPolicy />} />
-        {/*  for test do not remove */}
         <Route path="add" element={<AddProductWithVariant />} />
-        {/*  for test do not remove */}
+        <Route path="partner" element={<PartnerPage />} />
+        <Route path="faq" element={<Faq />} />
         <Route
           path="*"
           element={

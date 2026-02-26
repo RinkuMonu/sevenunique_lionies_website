@@ -13,9 +13,22 @@ const products = [
 
 export default function PopularProducts() {
   return (
-    <section className="pb-20 bg-gray-50">
+    <section className="py-20 bg-gray-50">
 
       <div className="">
+      <div className="flex items-center justify-between mb-8 px-10">
+          <div>
+            <h2 className="text-2xl md:text-3xl font-bold text-gray-900">
+              50% Discount 
+            </h2>
+            <span className="text-sm text-gray-500">
+              Browse Popular Categories
+            </span>
+          </div>
+          <button className="text-[#633426] font-semibold text-sm hover:text-orange-600 transition">
+            View All →
+          </button>
+        </div>
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 px-10">
           {products.map((product) => (
             <div key={product.id} className="group cursor-pointer bg-white ">

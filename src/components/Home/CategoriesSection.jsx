@@ -12,8 +12,8 @@ const categories = [
 
 export default function CategoriesSection() {
   return (
-    <section className="pb-16 bg-white">
-      <div className="max-w-7xl mx-auto px-6">
+    <section className="pt-16 bg-white">
+      <div className=" mx-auto px-24">
         <div className="flex items-center justify-between mb-8">
           <div>
             <h2 className="text-2xl md:text-3xl font-bold text-gray-900">
@@ -42,7 +42,7 @@ export default function CategoriesSection() {
           ))}
         </div>
       </div>
-      <div className="w-full my-10">
+      <div className="w-full mt-10">
       <img src="../images/centerbanner.webp" className="w-full" alt="Center Banner" />
       </div>
     </section>

@@ -1,583 +1,649 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
-  FaShoppingBag,
-  FaHeart,
-  FaBox,
-  FaTruck,
-  FaCheckCircle,
-  FaMapMarkerAlt,
+  FaRegSave,
+  FaTimes,
+  FaCamera,
+  FaRegCalendarAlt,
+  FaVenusMars,
+  FaGlobe,
 } from "react-icons/fa";
+import { LuUserRoundCheck, LuUserRound } from "react-icons/lu";
+import { IoIosNotificationsOutline } from "react-icons/io";
+import { CiDiscount1, CiWallet } from "react-icons/ci";
+import { TbMessageReport } from "react-icons/tb";
+import { RiLogoutCircleLine } from "react-icons/ri";
+import { MdArrowForward, MdLocationOn, MdOutlineDeleteSweep } from "react-icons/md";
+import { BsArrowClockwise } from "react-icons/bs";
 import { useAuth } from "../components/service/AuthContext";
-import { LucideEdit } from "lucide-react";
 import api from "../components/service/axios";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { LiaUserEditSolid } from "react-icons/lia";
+import SupportAccordion from "../components/SupportConditions";
+import OrdersList from "../components/OrdersList";
+import SimilerProduct from "../components/Home/SimilerProduct";
+import TopProducts from "../components/Home/TopProducts";
+import UserOffer from "../components/UserOffer";
+import MyCoins from "../components/MyCoins";
+import AddressBook from "../components/AddressBook";
 
-const orders = [
+const SIDEBAR_ITEMS = [
+  { id: "Overview", label: "Overview", icon: LuUserRound },
+  { id: "profile", label: "Profile", icon: LuUserRound },
+  { id: "address", label: "Addresses", icon: MdLocationOn },
+  { id: "Orders", label: "Orders", icon: BsArrowClockwise },
   {
-    id: "ORD001",
-    product: "Cotton Kurti",
-    image: "/image/tee1.jpg",
-    size: "M",
-    qty: 1,
-    price: 1299,
-    status: "Delivered",
+    id: "offers",
+    label: "Discounts & Bonuses",
+    icon: IoIosNotificationsOutline,
+  },
+  { id: "wallet", label: "My Wallet", icon: CiWallet },
+  { id: "complaint", label: "Help/Complaint", icon: TbMessageReport },
+  { id: "logout", label: "Log out", icon: RiLogoutCircleLine },
+];
+
+const ADDRESS_BOOK = [
+  {
+    id: "addr-1",
+    type: "Home",
+    name: "Nandini Singh",
+    phone: "+91 98765 43210",
+    line1: "C-102, Vaishali Nagar",
+    line2: "Near Central Park, Jaipur, Rajasthan - 302021",
+    isDefault: true,
   },
   {
-    id: "ORD002",
-    product: "Denim Jacket",
-    image: "/image/tee1.jpg",
-    size: "L",
-    qty: 1,
-    price: 2499,
-    status: "Shipped",
-  },
-  {
-    id: "ORD003",
-    product: "Floral Dress",
-    image: "/image/tee1.jpg",
-    size: "S",
-    qty: 2,
-    price: 1999,
-    status: "Processing",
+    id: "addr-2",
+    type: "Work",
+    name: "Nandini Singh",
+    phone: "+91 98765 43210",
+    line1: "4th Floor, Tech Hub",
+    line2: "Malviya Nagar, Jaipur, Rajasthan - 302017",
+    isDefault: false,
   },
 ];
+
+const createEmptyAddressForm = (rawUser) => ({
+  type: "Home",
+  name: rawUser?.user?.name || "",
+  phone: rawUser?.user?.mobile || "",
+  line1: "",
+  line2: "",
+});
+
+const mapUserToForm = (rawUser) => {
+  const profile = rawUser?.user || {};
+  const nameParts = (profile.name || "").trim().split(" ").filter(Boolean);
+  return {
+    firstName: profile.firstName || nameParts[0] || "",
+    lastName: profile.lastName || nameParts.slice(1).join(" ") || "",
+    dob: profile.dob ? String(profile.dob).slice(0, 10) : "",
+    gender: profile.gender || "",
+    country: profile.country || "",
+  };
+};
+
+const getAvatarUrl = (avatarPath) => {
+  if (!avatarPath) return "/image/avatar.jpg";
+  if (/^https?:\/\//i.test(avatarPath)) return avatarPath;
+  const baseUrl = api?.defaults?.baseURL || "http://localhost:5000";
+  return `${baseUrl}${avatarPath}`;
+};
 
 export default function UserProfilePage() {
   const { user, setLoginOpen, setUser } = useAuth();
   const navigate = useNavigate();
+
+  const [editMode, setEditMode] = useState(false);
+  const [formData, setFormData] = useState(mapUserToForm(user));
+  const [loading, setLoading] = useState(false);
+  const [activeTab, setActiveTab] = useState("Overview");
+  const [addresses, setAddresses] = useState(ADDRESS_BOOK);
+  const [selectedAddressId, setSelectedAddressId] = useState(
+    ADDRESS_BOOK.find((item) => item.isDefault)?.id || ADDRESS_BOOK[0]?.id || null,
+  );
+  const [showAddressForm, setShowAddressForm] = useState(false);
+  const [editingAddressId, setEditingAddressId] = useState(null);
+  const [addressForm, setAddressForm] = useState(createEmptyAddressForm(user));
+
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) {
       setLoginOpen(true);
       navigate("/");
     }
-  }, []);
-  const [edit, setEdit] = useState(false);
-  const [activeTab, setActiveTab] = useState("details");
-  const [showOrders, setShowOrders] = useState(false);
-  const [errors, setErrors] = useState({});
-  const [loading, setloading] = useState(false);
+  }, [navigate, setLoginOpen]);
 
-  const [form, setForm] = useState({
-    name: user?.user?.name || "",
-    email: user?.user?.email || "",
-    mobile: user?.user?.mobile || "",
-    avatar: null,
-  });
   useEffect(() => {
-    if (user?.user) {
-      setForm({
-        name: user.user.name || "",
-        email: user.user.email || "",
-        mobile: user.user.mobile || "",
-        avatar: null,
-      });
-    }
+    setFormData(mapUserToForm(user));
   }, [user]);
 
-  const handleChange = (e) => {
+  useEffect(() => {
+    if (!showAddressForm || editingAddressId) return;
+    setAddressForm((prev) => ({
+      ...prev,
+      name: user?.user?.name || prev.name,
+      phone: user?.user?.mobile || prev.phone,
+    }));
+  }, [user, showAddressForm, editingAddressId]);
+
+  const avatarSrc = useMemo(() => getAvatarUrl(user?.user?.avatar), [user]);
+
+  const handleInputChange = (e) => {
     const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
 
-    if (name === "name") {
-      if (!/^[a-zA-Z\s]*$/.test(value)) return;
-    }
-
-    if (name === "mobile") {
-      const cleaned = value.replace(/\D/g, "");
-      if (cleaned.length === 1 && !/[6-9]/.test(cleaned)) return;
-      if (cleaned.length > 10) return;
-      setForm((prev) => ({ ...prev, mobile: cleaned }));
+  const handleEditOrSave = async () => {
+    if (!editMode) {
+      setEditMode(true);
       return;
     }
 
-    setForm((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handleAvatar = (e) => {
-    setForm((prev) => ({ ...prev, avatar: e.target.files[0] }));
-  };
-
-  const [showTrackingModal, setShowTrackingModal] = useState(false);
-
-  const trackingSteps = [
-    { title: "Order Confirmed", active: true },
-    { title: "Order being packed", active: true },
-    { title: "Picked by rider", active: true },
-    { title: "Out for Delivery", active: false },
-    { title: "Rider is en route – Live Map", active: false },
-    { title: "Delivered, OTP verified", active: false },
-  ];
-  const validate = () => {
-    const err = {};
-
-    if (!form.name.trim()) err.name = "Name is required";
-    if (!form.email.trim()) err.email = "Email is required";
-    if (!/^\S+@\S+\.\S+$/.test(form.email)) err.email = "Invalid email format";
-
-    if (!form.mobile || form.mobile.length !== 10)
-      err.mobile = "Valid 10-digit mobile required";
-
-    setErrors(err);
-    return Object.keys(err).length === 0;
-  };
-  const handleSave = async () => {
-    if (!validate()) return;
-
-    const fd = new FormData();
-    fd.append("name", form.name);
-    fd.append("email", form.email);
-    fd.append("mobile", form.mobile);
-    if (form.password) fd.append("password", form.password);
-
+    setLoading(true);
     try {
-      setloading(true);
+      const fd = new FormData();
+      Object.keys(formData).forEach((key) => fd.append(key, formData[key]));
       const res = await api.put("/auth/update", fd);
-
       setUser(res.data);
-      localStorage.setItem("user", JSON.stringify(res.data.user));
-
-      setEdit(false);
+      setEditMode(false);
     } catch (err) {
-      alert(err.response?.data?.message || "Update failed");
+      alert("Update failed");
     } finally {
-      setloading(false);
+      setLoading(false);
     }
   };
 
+  const handleCancelEdit = () => {
+    setFormData(mapUserToForm(user));
+    setEditMode(false);
+  };
+
+  const handleAvatarUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const fd = new FormData();
+    fd.append("avatar", file);
+
+    try {
+      const res = await api.put("/auth/update", fd);
+      setUser(res.data);
+    } catch (err) {
+      alert("Avatar update failed");
+    }
+  };
+
+  const handleSidebarClick = (tabId) => {
+    if (tabId === "logout") {
+      localStorage.removeItem("token");
+      setUser(null);
+      setLoginOpen(true);
+      navigate("/");
+      return;
+    }
+
+    setActiveTab(tabId);
+  };
+
+  const openAddAddressForm = () => {
+    setEditingAddressId(null);
+    setAddressForm(createEmptyAddressForm(user));
+    setShowAddressForm(true);
+  };
+
+  const openEditAddressForm = (address) => {
+    setEditingAddressId(address.id);
+    setAddressForm({
+      type: address.type,
+      name: address.name,
+      phone: address.phone,
+      line1: address.line1,
+      line2: address.line2,
+    });
+    setShowAddressForm(true);
+  };
+
+  const closeAddressForm = () => {
+    setShowAddressForm(false);
+    setEditingAddressId(null);
+    setAddressForm(createEmptyAddressForm(user));
+  };
+
+  const handleAddressInputChange = (e) => {
+    const { name, value } = e.target;
+    setAddressForm((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSaveAddress = () => {
+    const payload = {
+      type: addressForm.type.trim(),
+      name: addressForm.name.trim(),
+      phone: addressForm.phone.trim(),
+      line1: addressForm.line1.trim(),
+      line2: addressForm.line2.trim(),
+    };
+
+    if (!payload.name || !payload.phone || !payload.line1 || !payload.line2) {
+      alert("Please fill all address details.");
+      return;
+    }
+
+    if (editingAddressId) {
+      setAddresses((prev) =>
+        prev.map((item) =>
+          item.id === editingAddressId ? { ...item, ...payload } : item,
+        ),
+      );
+      closeAddressForm();
+      return;
+    }
+
+    const newId = `addr-${Date.now()}`;
+    const shouldBeDefault = addresses.length === 0;
+    const newAddress = {
+      id: newId,
+      ...payload,
+      isDefault: shouldBeDefault,
+    };
+
+    setAddresses((prev) => [...prev, newAddress]);
+    if (shouldBeDefault) {
+      setSelectedAddressId(newId);
+    }
+    closeAddressForm();
+  };
+
+  const handleRemoveAddress = (id) => {
+    const addressToDelete = addresses.find((item) => item.id === id);
+    let next = addresses.filter((item) => item.id !== id);
+
+    if (next.length === 0) {
+      setAddresses([]);
+      setSelectedAddressId(null);
+      return;
+    }
+
+    if (addressToDelete?.isDefault) {
+      next = next.map((item, index) => ({
+        ...item,
+        isDefault: index === 0,
+      }));
+      setSelectedAddressId(next[0].id);
+    } else if (selectedAddressId === id) {
+      setSelectedAddressId(next.find((item) => item.isDefault)?.id || next[0].id);
+    }
+
+    setAddresses(next);
+  };
+
+  const handleSetDefault = (id) => {
+    setAddresses((prev) =>
+      prev.map((item) => ({ ...item, isDefault: item.id === id })),
+    );
+    setSelectedAddressId(id);
+  };
+
+  const overviewActions = [
+    {
+      id: "overview-profile",
+      label: "Profile",
+      value: null,
+      Icon: LuUserRound,
+      iconClass: "text-blue-600",
+      borderClass: "border-blue-200",
+      labelClass: "text-black",
+      actionType: "tab",
+      actionValue: "profile",
+    },
+    {
+      id: "overview-orders",
+      label: "My Orders",
+      value: user?.totalOrder || 0,
+      Icon: null,
+      valueClass: "text-blue-600",
+      borderClass: "border-blue-200",
+      labelClass: "text-black",
+      actionType: "tab",
+      actionValue: "Orders",
+    },
+    {
+      id: "overview-wishlist",
+      label: "Wishlist Items",
+      value: user?.totalWishList || 0,
+      Icon: null,
+      valueClass: "text-emerald-600",
+      borderClass: "border-emerald-200",
+      labelClass: "text-emerald-700",
+      actionType: "route",
+      actionValue: "/wishlist",
+    },
+    {
+      id: "overview-edit-profile",
+      label: "Edit Profile",
+      value: null,
+      Icon: LiaUserEditSolid,
+      iconClass: "text-purple-600",
+      borderClass: "border-purple-200",
+      labelClass: "text-purple-600",
+      actionType: "tab",
+      actionValue: "profile",
+    },
+    {
+      id: "overview-wallet",
+      label: "My Wallet",
+      value: null,
+      Icon: LiaUserEditSolid,
+      iconClass: "text-black",
+      borderClass: "border-purple-200",
+      labelClass: "text-black",
+      actionType: "tab",
+      actionValue: "wallet",
+    },
+    {
+      id: "overview-offers",
+      label: "Discounts & Bonuses",
+      value: null,
+      Icon: CiDiscount1,
+      iconClass: "text-black",
+      borderClass: "border-purple-200",
+      labelClass: "text-black",
+      actionType: "tab",
+      actionValue: "offers",
+    },
+  ];
+
   return (
-    <div className="min-h-screen bg-[#f9f3eb] py-8">
-      <div className="max-w-7xl mx-auto p-6 grid grid-cols-1 lg:grid-cols-4 gap-6">
-        {/* LEFT PROFILE */}
-        <div className="bg-white rounded-3xl h-fit shadow-lg p-6 text-center border border-[#927f6830] sticky top-6">
-          <label className="relative w-32 h-32 mx-auto block cursor-pointer">
-            <img
-              src={
-                `http://localhost:5000${user?.user?.avatar}` ||
-                "/image/avatar.jpg"
-              }
-              alt="User"
-              className="w-32 h-32 rounded-full mx-auto mb-4 object-cover ring-4 ring-[#927f68]"
-            />
-
-            {/* EDIT ICON */}
-            <div className="absolute bottom-2 right-2 bg-[#927f68] p-1 rounded-full text-white shadow-lg">
-              <LucideEdit size={10} />
-            </div>
-
-            <input
-              type="file"
-              accept="image/*"
-              className="hidden"
-              onChange={async (e) => {
-                const file = e.target.files[0];
-                if (!file) return;
-
-                const fd = new FormData();
-                fd.append("avatar", file);
-
-                try {
-                  const res = await api.put("/auth/update", fd);
-                  setUser(res.data);
-                } catch (err) {
-                  alert("Avatar update failed");
-                }
-              }}
-            />
-          </label>
-
-          <h2 className="text-xl font-semibold text-[#927f68]">
-            {user?.user?.name || "Lionies user"}
-          </h2>
-          <p className="text-sm text-gray-500">
-            {user?.user?.email || "abc@123gmail.com"}
-          </p>
-
-          <div className="flex justify-center gap-2 mt-4">
-            <span className="px-4 py-1 text-xs rounded-full bg-[#927f68] text-white">
-              Premium User
-            </span>
-            <span className="px-4 py-1 text-xs rounded-full border border-[#927f68] text-[#927f68]">
-              {new Date(user?.user?.createdAt).toLocaleDateString("en-IN")}
-            </span>
-          </div>
-
-          <div className="mt-6 space-y-3 text-sm text-left text-gray-700">
-            <div className="flex items-center gap-2">
-              <FaShoppingBag className="text-[#927f68]" />{" "}
-              {user?.totalOrder || 0} Orders
-            </div>
-            <div className="flex items-center gap-2">
-              <FaHeart className="text-[#927f68]" /> {user?.totalWishList || 0}{" "}
-              Wishlist Items
-            </div>
-          </div>
-        </div>
-
-        {/* RIGHT CONTENT */}
-        <div className="lg:col-span-3 space-y-6">
-          {/* TABS ROW */}
-          <div className="bg-white shadow-lg p-3 border border-[#927f6830] flex gap-3">
-            {[
-              { key: "details", label: "User Details" },
-              { key: "orders", label: "Previous Orders" },
-              { key: "tracking", label: "Latest Tracking" },
-            ].map((tab) => (
-              <button
-                key={tab.key}
-                onClick={() => setActiveTab(tab.key)}
-                className={`flex-1 py-3 text-sm font-medium transition
-                  ${
-                    activeTab === tab.key
-                      ? "bg-[#927f68] text-white"
-                      : "bg-[#f9f3eb] text-[#927f68] hover:bg-[#927f68] hover:text-white"
-                  }`}
-              >
-                {tab.label}
-              </button>
-            ))}
-          </div>
-
-          {/* USER DETAILS */}
-          {activeTab === "details" && (
-            <div className="bg-white shadow-lg p-6 border border-[#927f6830]">
-              <div className="flex justify-between items-center mb-4">
-                <h3 className="text-lg font-semibold text-[#927f68]">
-                  Account Details
-                </h3>
+    <div className="min-h-screen px-3 py-6 sm:px-6 lg:px-8">
+      <div>
+        <div className="flex flex-col gap-6 lg:flex-row lg:gap-8">
+          <div className="w-full lg:sticky lg:top-24 lg:w-72 lg:self-start">
+            <div className="flex gap-2 overflow-x-auto pb-2 lg:block lg:space-y-1 lg:overflow-visible lg:pb-0">
+              {SIDEBAR_ITEMS.map((item) => (
                 <button
-                  onClick={edit ? handleSave : () => setEdit(true)}
-                  disabled={loading}
-                  className={`px-5 py-2 text-sm rounded-full cursor-pointer bg-[#927f68] text-white ${loading && "cursor-not-allowed "}`}
+                  key={item.id}
+                  onClick={() => handleSidebarClick(item.id)}
+                  className={`group flex shrink-0 items-center gap-2 rounded-2xl p-2 px-3 transition-all lg:mb-3 lg:w-full ${activeTab === item.id
+                    ? "text-blue-400"
+                    : "text-black hover:rounded-br-[40px] hover:rounded-tl-[40px] hover:bg-gray-50 hover:text-blue-600"
+                    }`}
                 >
-                  {edit ? "Save Changes" : "Edit Profile"}
+                  <item.icon className="text-xl" />
+                  <span className="whitespace-nowrap text-sm lg:text-lg">{item.label}</span>
                 </button>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {/* NAME */}
-                <div>
-                  <input
-                    name="name"
-                    value={form.name}
-                    disabled={!edit}
-                    onChange={handleChange}
-                    className="border border-gray-400 p-3 w-full"
-                    placeholder="Full Name"
-                  />
-                  {errors.name && (
-                    <p className="text-red-500 text-xs mt-1">{errors.name}</p>
-                  )}
-                </div>
-
-                {/* EMAIL */}
-                <div>
-                  <input
-                    name="email"
-                    value={form.email}
-                    disabled={!edit}
-                    onChange={handleChange}
-                    className="border border-gray-400 p-3 w-full"
-                    placeholder="Email"
-                  />
-                  {errors.email && (
-                    <p className="text-red-500 text-xs mt-1">{errors.email}</p>
-                  )}
-                </div>
-
-                {/* PASSWORD */}
-                <div>
-                  <input
-                    name="password"
-                    type="password"
-                    disabled={!edit}
-                    onChange={handleChange}
-                    className="border border-gray-400 p-3 w-full"
-                    placeholder="New Password (optional)"
-                  />
-                </div>
-
-                {/* MOBILE */}
-                <div>
-                  <input
-                    name="mobile"
-                    value={form.mobile}
-                    disabled={!edit}
-                    onChange={handleChange}
-                    className="border border-gray-400 p-3 w-full"
-                    placeholder="Phone"
-                  />
-                  {errors.mobile && (
-                    <p className="text-red-500 text-xs mt-1">{errors.mobile}</p>
-                  )}
-                </div>
-              </div>
-
-              <textarea
-                disabled={!edit}
-                defaultValue="Jaipur, Rajasthan, India"
-                className="border border-gray-400 p-3 w-full mt-4"
-                placeholder="Address"
-              />
+              ))}
+              <button className="flex shrink-0 items-center gap-3 rounded-2xl rounded-br-[40px] rounded-tl-[40px] bg-red-50 p-3 text-red-500 hover:bg-red-100 lg:w-full lg:p-4">
+                <MdOutlineDeleteSweep className="text-lg" />
+                <span className="whitespace-nowrap">Delete Account</span>
+              </button>
             </div>
-          )}
+          </div>
 
-          {/* PREVIOUS ORDERS */}
-          {activeTab === "orders" && (
-            <div className="bg-white shadow-lg p-6 border border-[#927f6830] space-y-6">
-              <h3 className="text-lg font-semibold text-[#927f68]">
-                Previous Orders
-              </h3>
-
-              {/* ORDER CARD */}
-              <div className="border border-gray-200">
-                {/* ORDER HEADER */}
-                <div className="flex flex-wrap justify-between items-center gap-4 bg-gray-50 p-4 text-sm">
-                  <div>
-                    <p className="text-gray-500">Order Date</p>
-                    <p className="font-medium">March 23, 2023</p>
-                  </div>
-
-                  <div>
-                    <p className="text-gray-500">Status</p>
-                    <p className="text-green-600 font-medium">Placed</p>
-                  </div>
-
-                  <div>
-                    <p className="text-gray-500">Total</p>
-                    <p className="font-medium">₹2274.20</p>
-                  </div>
-
-                  <div>
-                    <p className="text-gray-500">Order Id</p>
-                    <p
-                      onClick={() => setShowTrackingModal(true)}
-                      className="font-medium flex items-center gap-1 cursor-pointer underline text-black"
-                    >
-                      27245875
-                    </p>
-                  </div>
-
-                  <div className="flex gap-2">
-                    <button className="px-4 py-2 bg-[#927f68] text-white text-sm">
-                      Order Again
-                    </button>
-                    <button className="px-4 py-2 border text-sm">
-                      View Order
-                    </button>
-                  </div>
+          <div className="flex-1 space-y-8">
+            {activeTab === "profile" && (
+              <>
+                <div>
+                  <h1 className="flex items-center gap-2 text-2xl text-gray-900 lg:text-3xl">
+                    <LuUserRoundCheck className="text-2xl" />
+                    Personal Data
+                  </h1>
+                  <p className="mt-2 text-gray-600">
+                    Enter personal data so you do not fill it manually when placing
+                    order
+                  </p>
                 </div>
 
-                {/* DELIVERY INFO */}
-                <div className="p-4 text-sm text-gray-600 border-t">
-                  Estimated Delivery Thu, April 20 - Wed, May 2
-                </div>
-
-                {/* PRODUCT ITEM */}
-                <div className="flex gap-6 p-6 border-t">
-                  <img
-                    src="/image/tee1.jpg"
-                    alt=""
-                    className="w-28 h-28 object-cover"
-                  />
-
-                  <div className="flex-1 space-y-2">
-                    <h4 className="font-semibold text-lg">
-                      Fiddle Leaf Fig – Large (5ft)
-                    </h4>
-
-                    <p className="text-sm text-gray-600">Size: Medium</p>
-
-                    <p className="text-sm text-gray-600">Quantity: 1</p>
-
-                    <p className="text-sm text-gray-600">
-                      Category: Indoor Plants
-                    </p>
-
-                    <p className="text-sm text-gray-600">Fabric: Cotton</p>
-                  </div>
-
-                  <div className="text-right space-y-3">
-                    <p className="text-lg font-semibold text-green-700">
-                      ₹1145
-                    </p>
-
-                    <button className="px-4 py-2 border text-sm">
-                      Buy It Again
-                    </button>
-                  </div>
-                </div>
-
-                {/* SECOND PRODUCT */}
-                <div className="flex gap-6 p-6 border-t">
-                  <img
-                    src="/image/tee1.jpg"
-                    alt=""
-                    className="w-28 h-28 object-cover"
-                  />
-
-                  <div className="flex-1 space-y-2">
-                    <h4 className="font-semibold text-lg">
-                      Sansevieria Trifasciata ‘Laurentii’
-                    </h4>
-
-                    <p className="text-sm text-gray-600">Size: Large</p>
-
-                    <p className="text-sm text-gray-600">Quantity: 1</p>
-
-                    <p className="text-sm text-gray-600">
-                      Category: Indoor Plants
-                    </p>
-
-                    <p className="text-sm text-gray-600">Fabric: Cotton</p>
-                  </div>
-
-                  <div className="text-right space-y-3">
-                    <p className="text-lg font-semibold text-green-700">
-                      ₹1129
-                    </p>
-
-                    <button className="px-4 py-2 border text-sm">
-                      Buy It Again
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* LATEST ORDER TRACKING */}
-          {activeTab === "tracking" && (
-            <div className="bg-white shadow-lg p-6 border border-[#927f6830]">
-              <h3 className="text-lg font-semibold text-[#927f68] mb-6">
-                Latest Order Tracking
-              </h3>
-
-              <div className="flex items-center justify-between gap-6 px-4 overflow-x-auto">
-                <HorizontalTimelineItem
-                  icon={<FaBox />}
-                  title="Order Placed"
-                  date="12 Feb 2026"
-                  active
-                />
-                <Connector active />
-                <HorizontalTimelineItem
-                  icon={<FaTruck />}
-                  title="Shipped"
-                  date="13 Feb 2026"
-                  active
-                />
-                <Connector />
-                <HorizontalTimelineItem
-                  icon={<FaMapMarkerAlt />}
-                  title="Out for Delivery"
-                  date="14 Feb 2026"
-                />
-                <Connector />
-                <HorizontalTimelineItem
-                  icon={<FaCheckCircle />}
-                  title="Delivered"
-                  date="Expected 15 Feb"
-                />
-              </div>
-            </div>
-          )}
-
-          {showTrackingModal && (
-            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-              <div className="bg-white w-full max-w-md p-6 relative shadow-lg">
-                {/* Header */}
-                <div className="flex justify-between items-center mb-6">
-                  <h3 className="text-lg font-semibold text-black">
-                    Order Tracking
-                  </h3>
-                  <button
-                    onClick={() => setShowTrackingModal(false)}
-                    className="text-gray-500 hover:text-black text-xl"
-                  >
-                    ✕
-                  </button>
-                </div>
-
-                {/* Timeline */}
-                <div className="relative ">
-                  {/* Vertical line */}
-                  <div className="absolute left-[10px] top-0 bottom-0 w-px bg-gray-300" />
-
-                  {trackingSteps.map((step, index) => (
-                    <div key={index} className="flex gap-4 mb-6 last:mb-0">
-                      {/* Dot */}
-                      <div
-                        className={`w-5 h-5 rounded-full flex items-center justify-center z-10
-                ${step.active ? "bg-[#927f68]" : "bg-gray-300"}`}
-                      >
-                        {step.active && (
-                          <div className="w-2 h-2 bg-white rounded-full" />
-                        )}
-                      </div>
-
-                      {/* Content */}
-                      <div>
-                        <p
-                          className={`font-medium ${
-                            step.active ? "text-black" : "text-gray-500"
-                          }`}
-                        >
-                          {step.title}
-                        </p>
-
-                        {step.title.includes("Live Map") && step.active && (
-                          <button className="text-sm text-black underline mt-1">
-                            View Live Map
-                          </button>
-                        )}
+                <div className="rounded-3xl border border-gray-300 bg-white p-4 sm:p-6">
+                  <div className="mb-6 flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-start">
+                    <div className="flex flex-col items-start">
+                      <div className="relative">
+                        <img
+                          src={avatarSrc}
+                          alt="Profile"
+                          className="h-32 w-32 rounded-full border-4 border-white object-cover shadow-xl"
+                        />
+                        <label className="absolute -right-2 bottom-4 rounded-full border-2 border-gray-200 bg-white p-2 shadow-lg hover:shadow-xl">
+                          <FaCamera className="text-gray-500" />
+                          <input
+                            type="file"
+                            className="hidden"
+                            accept="image/*"
+                            onChange={handleAvatarUpload}
+                          />
+                        </label>
                       </div>
                     </div>
-                  ))}
+
+                    <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row">
+                      <button
+                        onClick={handleEditOrSave}
+                        disabled={loading}
+                        className="flex w-full items-center justify-center gap-2 rounded-2xl border border-gray-400 px-6 py-3 font-semibold text-black disabled:opacity-50 sm:w-fit sm:px-8"
+                      >
+                        <FaRegSave />
+                        {loading
+                          ? "Saving..."
+                          : editMode
+                            ? "Save Changes"
+                            : "Edit Profile"}
+                      </button>
+
+                      {editMode && (
+                        <button
+                          onClick={handleCancelEdit}
+                          className="flex w-full items-center justify-center gap-2 rounded-2xl border border-gray-300 px-6 py-3 text-gray-700 hover:bg-gray-50 sm:w-fit sm:px-8"
+                        >
+                          <FaTimes />
+                          Cancel
+                        </button>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
+                    <div className="space-y-6 lg:col-span-3">
+                      <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                        <div>
+                          <label className="mb-2 flex items-center gap-2 text-sm font-semibold text-gray-700">
+                            <LuUserRound className="text-black" />
+                            First Name
+                          </label>
+                          <input
+                            name="firstName"
+                            value={formData.firstName}
+                            onChange={handleInputChange}
+                            disabled={!editMode}
+                            className="w-full rounded-xl border border-gray-300 px-4 py-3"
+                          />
+                        </div>
+                        <div>
+                          <label className="mb-2 flex items-center gap-2 text-sm font-semibold text-gray-700">
+                            <LuUserRound className="text-black" />
+                            Second Name
+                          </label>
+                          <input
+                            name="lastName"
+                            value={formData.lastName}
+                            onChange={handleInputChange}
+                            disabled={!editMode}
+                            className="w-full rounded-xl border border-gray-300 px-4 py-3"
+                          />
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+                        <div>
+                          <label className="mb-2 flex items-center gap-2 text-sm font-semibold text-gray-700">
+                            <FaRegCalendarAlt className="text-black" />
+                            Date of Birth
+                          </label>
+                          <input
+                            type="date"
+                            name="dob"
+                            value={formData.dob}
+                            onChange={handleInputChange}
+                            disabled={!editMode}
+                            className="w-full rounded-xl border border-gray-300 px-4 py-3"
+                          />
+                        </div>
+                        <div>
+                          <label className="mb-2 flex items-center gap-2 text-sm font-semibold text-gray-700">
+                            <FaVenusMars className="text-black" />
+                            Gender
+                          </label>
+                          <select
+                            name="gender"
+                            value={formData.gender}
+                            onChange={handleInputChange}
+                            disabled={!editMode}
+                            className="w-full rounded-xl border border-gray-300 px-4 py-3"
+                          >
+                            <option value="">Select Gender</option>
+                            <option value="female">Female</option>
+                            <option value="male">Male</option>
+                          </select>
+                        </div>
+                        <div>
+                          <label className="mb-2 flex items-center gap-2 text-sm font-semibold text-gray-700">
+                            <FaGlobe className="text-black" />
+                            Country
+                          </label>
+                          <select
+                            name="country"
+                            value={formData.country}
+                            onChange={handleInputChange}
+                            disabled={!editMode}
+                            className="w-full rounded-xl border border-gray-300 px-4 py-3"
+                          >
+                            <option value="">Select Country</option>
+                            <option value="Ukraine">Ukraine</option>
+                            <option value="India">India</option>
+                          </select>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </>
+            )}
+
+            {activeTab === "Overview" && (
+              <>
+                <div className="rounded-3xl border border-gray-300 bg-white p-4 sm:p-6">
+                  <div className="flex flex-col items-start gap-4 sm:flex-row sm:gap-6">
+                    <div className="relative shrink-0">
+                      <img
+                        src={avatarSrc}
+                        alt={user?.user?.name || "Lionies User"}
+                        className="h-24 w-24 rounded-3xl border-4 border-white object-cover shadow-md ring-2 ring-gray-200/50"
+                      />
+                    </div>
+
+                    <div className="flex w-full flex-col justify-between gap-3 sm:flex-row sm:gap-4">
+                      <div>
+                        <h1 className="mb-2 truncate text-2xl font-bold text-gray-900 sm:text-3xl">
+                          {user?.user?.name || "Lionies User"}
+                        </h1>
+                        <p className="mb-0 text-md text-gray-600">
+                          {user?.user?.email || "user@example.com"}
+                        </p>
+                        <p className="text-sm text-gray-500">
+                          {user?.user?.mobile || "+91 98765 43210"}
+                        </p>
+                      </div>
+
+                      <div className="flex flex-col items-start gap-2 sm:items-end">
+                        <div className="flex items-center gap-2 rounded-full bg-green-100 px-3 py-2">
+                          <div className="h-3 w-3 animate-pulse rounded-full bg-green-400" />
+                          <span className="text-[10px] font-medium text-green-600">
+                            Active Account
+                          </span>
+                        </div>
+                        <span className="ml-4 text-sm text-gray-500">
+                          Member since{" "}
+                          {user?.user?.createdAt
+                            ? new Date(user.user.createdAt).toLocaleDateString("en-IN")
+                            : "-"}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
                 </div>
 
-                {/* Footer */}
-                <div className="mt-6 text-right">
-                  <button
-                    onClick={() => setShowTrackingModal(false)}
-                    className="px-5 py-2 bg-[#927f68] text-white text-sm"
-                  >
-                    Close
-                  </button>
+                <div className="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
+                  {overviewActions.map((item) => {
+                    const Content = (
+                      <div className={`group flex items-center justify-between gap-3 rounded-2xl rounded-br-[40px] rounded-tl-[40px] border p-4 text-center transition-all hover:border-blue-100 sm:p-6 ${item.borderClass}`}>
+                        <div className="flex items-center gap-3">
+                          {item.Icon ? (
+                            <item.Icon className={`text-2xl ${item.iconClass} group-hover:text-blue-600`} />
+                          ) : (
+                            <div className={`mb-1 rounded-xl border px-3 py-1 text-xl font-bold ${item.valueClass}`}>
+                              {item.value}
+                            </div>
+                          )}
+                          <div className={`text-sm font-medium ${item.labelClass} group-hover:text-blue-600`}>
+                            {item.label}
+                          </div>
+                        </div>
+                        <span className="rounded-xl border p-3 group-hover:text-blue-600">
+                          <MdArrowForward />
+                        </span>
+                      </div>
+                    );
+
+                    if (item.actionType === "route") {
+                      return (
+                        <Link key={item.id} to={item.actionValue}>
+                          {Content}
+                        </Link>
+                      );
+                    }
+
+                    return (
+                      <button
+                        key={item.id}
+                        type="button"
+                        onClick={() => setActiveTab(item.actionValue)}
+                        className="w-full text-left"
+                      >
+                        {Content}
+                      </button>
+                    );
+                  })}
                 </div>
-              </div>
-            </div>
-          )}
+
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-1">
+                  <SupportAccordion />
+                </div>
+              </>
+            )}
+
+            {activeTab === "Orders" && <OrdersList />}
+            {activeTab === "address" && (
+              <AddressBook
+                addresses={addresses}
+                selectedAddressId={selectedAddressId}
+                showAddressForm={showAddressForm}
+                editingAddressId={editingAddressId}
+                addressForm={addressForm}
+                onAddNew={openAddAddressForm}
+                onAddressInputChange={handleAddressInputChange}
+                onSaveAddress={handleSaveAddress}
+                onCloseAddressForm={closeAddressForm}
+                onSelectAddress={setSelectedAddressId}
+                onEditAddress={openEditAddressForm}
+                onRemoveAddress={handleRemoveAddress}
+                onSetDefault={handleSetDefault}
+              />
+            )}
+            {activeTab === "offers" && <UserOffer />}
+            {activeTab === "wallet" && <MyCoins />}
+            {activeTab === "complaint" && <SupportAccordion />}
+          </div>
         </div>
       </div>
+      <SimilerProduct />
+      <TopProducts />
     </div>
-  );
-}
-
-function HorizontalTimelineItem({ icon, title, date, active }) {
-  return (
-    <div className="flex flex-col items-center min-w-[140px] text-center">
-      <div
-        className={`w-16 h-16 rounded-full flex items-center justify-center text-2xl mb-3
-          ${
-            active
-              ? "bg-[#927f68] text-white shadow-lg"
-              : "bg-[#f5f0dd] text-[#927f68]"
-          }`}
-      >
-        {icon}
-      </div>
-      <p className="font-semibold text-sm">{title}</p>
-      <p className="text-xs text-gray-500">{date}</p>
-    </div>
-  );
-}
-
-function Connector({ active }) {
-  return (
-    <div
-      className={`h-1 flex-1 rounded-full mb-8 ${
-        active ? "bg-[#927f68]" : "bg-[#e5dfcf]"
-      }`}
-    />
   );
 }

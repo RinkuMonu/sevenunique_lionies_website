@@ -1,1152 +1,366 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
-import { FiGrid, FiList, FiChevronDown, FiSearch } from "react-icons/fi";
-import { BsCart } from "react-icons/bs";
+
+import React, { useEffect, useMemo, useRef, useState } from "react";
+import { Link, useLocation, useSearchParams } from "react-router-dom";
+import { FiAlertCircle, FiChevronDown, FiGrid, FiHeart, FiList, FiSearch, FiStar } from "react-icons/fi";
 import { CiFilter } from "react-icons/ci";
 
-const ProductListingPage = () => {
-  const title = "T-Shirts";
+const TITLE = "Men's T-Shirts";
+const PAGE_SIZE = 8;
+const DEFAULT_SORT = "recommended";
+const CACHE_KEY = "plp_cache_v1";
+const WISHLIST_KEY = "plp_wishlist_v1";
 
-  const products = [
-    {
-      id: 1,
-      img: "../images/similar1.png",
-      hoverImg: "../images/similarback1.png",
-      name: `${title} Classic`,
-      price: 999,
-      size: "M",
-      category: "Hooded T-Shirts",
-      theme: "Batman",
-      rating: 4.5,
-      discount: 10,
-      fabric: "Cotton",
-      color: "Black",
-      design: "Graphic",
-      fit: "Regular",
-      sleeves: "Short",
-      neck: "Round",
-    },
-    {
-      id: 2,
-      img: "../images/similar2.png",
-      hoverImg: "../images/similarback2.jpeg",
-      name: `${title} Premium`,
-      price: 1299,
-      size: "L",
-      category: "Men Co-Ord Sets",
-      theme: "Attack On Titan",
-      rating: 4.2,
-      discount: 15,
-      fabric: "Polyester",
-      color: "Grey",
-      design: "Printed",
-      fit: "Slim",
-      sleeves: "Long",
-      neck: "V-Neck",
-    },
-    {
-      id: 3,
-      img: "../images/similar3.png",
-      hoverImg: "../images/similarback3.png",
-      name: `${title} Street`,
-      price: 1499,
-      size: "S",
-      category: "Oversized Polos",
-      theme: "5 Star",
-      rating: 4.8,
-      discount: 5,
-      fabric: "Cotton",
-      color: "White",
-      design: "Plain",
-      fit: "Oversized",
-      sleeves: "Short",
-      neck: "Polo",
-    },
-    {
-      id: 4,
-      img: "../images/similar4.png",
-      hoverImg: "../images/similarback4.png",
-      name: `${title} Street`,
-      price: 1599,
-      size: "XL",
-      category: "Oversized T-Shirts",
-      theme: "Avatar",
-      rating: 4.1,
-      discount: 20,
-      fabric: "Cotton Blend",
-      color: "Blue",
-      design: "Graphic",
-      fit: "Regular",
-      sleeves: "Short",
-      neck: "Round",
-    },
-    {
-      id: 5,
-      img: "../images/similar5.png",
-      hoverImg: "../images/similarback5.png",
-      name: `${title} Street`,
-      price: 1799,
-      size: "M",
-      category: "Oversized T-Shirts",
-      theme: "Batman",
-      rating: 4.7,
-      discount: 8,
-      fabric: "Cotton",
-      color: "Red",
-      design: "Printed",
-      fit: "Slim",
-      sleeves: "Short",
-      neck: "Crew",
-    },
-    {
-      id: 6,
-      img: "../images/similar1.png",
-      hoverImg: "../images/similarback6.png",
-      name: `${title} Street`,
-      price: 899,
-      size: "S",
-      category: "Hooded T-Shirts",
-      theme: "5 Star",
-      rating: 4.3,
-      discount: 12,
-      fabric: "Fleece",
-      color: "Navy",
-      design: "Plain",
-      fit: "Regular",
-      sleeves: "Long",
-      neck: "Round",
-    },
-    {
-      id: 7,
-      img: "../images/similar2.png",
-      hoverImg: "../images/similarback7.png",
-      name: `${title} Street`,
-      price: 1999,
-      size: "XXL",
-      category: "Oversized Polos",
-      theme: "Avatar",
-      rating: 4.6,
-      discount: 25,
-      fabric: "Pima Cotton",
-      color: "Green",
-      design: "Graphic",
-      fit: "Oversized",
-      sleeves: "Short",
-      neck: "Polo",
-    },
-    {
-      id: 8,
-      img: "../images/similar3.png",
-      hoverImg: "../images/similarback1.png",
-      name: `${title} Street`,
-      price: 1099,
-      size: "L",
-      category: "Men Co-Ord Sets",
-      theme: "Attack On Titan",
-      rating: 4.4,
-      discount: 18,
-      fabric: "Cotton",
-      color: "Black",
-      design: "Printed",
-      fit: "Slim",
-      sleeves: "Short",
-      neck: "V-Neck",
-    },
-    {
-      id: 9,
-      img: "../images/similar4.png",
-      hoverImg: "../images/similarback2.jpeg",
-      name: `${title} Street`,
-      price: 1399,
-      size: "XL",
-      category: "Oversized T-Shirts",
-      theme: "Batman",
-      rating: 4.9,
-      discount: 7,
-      fabric: "Organic Cotton",
-      color: "White",
-      design: "Graphic",
-      fit: "Regular",
-      sleeves: "Long",
-      neck: "Round",
-    },
-    {
-      id: 10,
-      img: "../images/similar5.png",
-      hoverImg: "../images/similarback3.png",
-      name: `${title} Street`,
-      price: 1899,
-      size: "XXL",
-      category: "Oversized T-Shirts",
-      theme: "Batman",
-      rating: 4.9,
-      discount: 7,
-      fabric: "Organic Cotton",
-      color: "White",
-      design: "Graphic",
-      fit: "Regular",
-      sleeves: "Long",
-      neck: "Round",
-    },
-    {
-      id: 1,
-      img: "../images/similar1.png",
-      hoverImg: "../images/similarback1.png",
-      name: `${title} Classic`,
-      price: 999,
-      size: "M",
-      category: "Hooded T-Shirts",
-      theme: "Batman",
-      rating: 4.5,
-      discount: 10,
-      fabric: "Cotton",
-      color: "Black",
-      design: "Graphic",
-      fit: "Regular",
-      sleeves: "Short",
-      neck: "Round",
-    },
-    {
-      id: 2,
-      img: "../images/similar2.png",
-      hoverImg: "../images/similarback2.jpeg",
-      name: `${title} Premium`,
-      price: 1299,
-      size: "L",
-      category: "Men Co-Ord Sets",
-      theme: "Attack On Titan",
-      rating: 4.2,
-      discount: 15,
-      fabric: "Polyester",
-      color: "Grey",
-      design: "Printed",
-      fit: "Slim",
-      sleeves: "Long",
-      neck: "V-Neck",
-    },
-    {
-      id: 3,
-      img: "../images/similar3.png",
-      hoverImg: "../images/similarback3.png",
-      name: `${title} Street`,
-      price: 1499,
-      size: "S",
-      category: "Oversized Polos",
-      theme: "5 Star",
-      rating: 4.8,
-      discount: 5,
-      fabric: "Cotton",
-      color: "White",
-      design: "Plain",
-      fit: "Oversized",
-      sleeves: "Short",
-      neck: "Polo",
-    },
-    {
-      id: 4,
-      img: "../images/similar4.png",
-      hoverImg: "../images/similarback4.png",
-      name: `${title} Street`,
-      price: 1599,
-      size: "XL",
-      category: "Oversized T-Shirts",
-      theme: "Avatar",
-      rating: 4.1,
-      discount: 20,
-      fabric: "Cotton Blend",
-      color: "Blue",
-      design: "Graphic",
-      fit: "Regular",
-      sleeves: "Short",
-      neck: "Round",
-    },
-    {
-      id: 5,
-      img: "../images/similar5.png",
-      hoverImg: "../images/similarback5.png",
-      name: `${title} Street`,
-      price: 1799,
-      size: "M",
-      category: "Oversized T-Shirts",
-      theme: "Batman",
-      rating: 4.7,
-      discount: 8,
-      fabric: "Cotton",
-      color: "Red",
-      design: "Printed",
-      fit: "Slim",
-      sleeves: "Short",
-      neck: "Crew",
-    },
-    {
-      id: 6,
-      img: "../images/similar1.png",
-      hoverImg: "../images/similarback6.png",
-      name: `${title} Street`,
-      price: 899,
-      size: "S",
-      category: "Hooded T-Shirts",
-      theme: "5 Star",
-      rating: 4.3,
-      discount: 12,
-      fabric: "Fleece",
-      color: "Navy",
-      design: "Plain",
-      fit: "Regular",
-      sleeves: "Long",
-      neck: "Round",
-    },
-    {
-      id: 7,
-      img: "../images/similar2.png",
-      hoverImg: "../images/similarback7.png",
-      name: `${title} Street`,
-      price: 1999,
-      size: "XXL",
-      category: "Oversized Polos",
-      theme: "Avatar",
-      rating: 4.6,
-      discount: 25,
-      fabric: "Pima Cotton",
-      color: "Green",
-      design: "Graphic",
-      fit: "Oversized",
-      sleeves: "Short",
-      neck: "Polo",
-    },
-    {
-      id: 8,
-      img: "../images/similar3.png",
-      hoverImg: "../images/similarback1.png",
-      name: `${title} Street`,
-      price: 1099,
-      size: "L",
-      category: "Men Co-Ord Sets",
-      theme: "Attack On Titan",
-      rating: 4.4,
-      discount: 18,
-      fabric: "Cotton",
-      color: "Black",
-      design: "Printed",
-      fit: "Slim",
-      sleeves: "Short",
-      neck: "V-Neck",
-    },
-    {
-      id: 9,
-      img: "../images/similar4.png",
-      hoverImg: "../images/similarback2.jpeg",
-      name: `${title} Street`,
-      price: 1399,
-      size: "XL",
-      category: "Oversized T-Shirts",
-      theme: "Batman",
-      rating: 4.9,
-      discount: 7,
-      fabric: "Organic Cotton",
-      color: "White",
-      design: "Graphic",
-      fit: "Regular",
-      sleeves: "Long",
-      neck: "Round",
-    },
-    {
-      id: 10,
-      img: "../images/similar5.png",
-      hoverImg: "../images/similarback3.png",
-      name: `${title} Street`,
-      price: 1899,
-      size: "XXL",
-      category: "Oversized T-Shirts",
-      theme: "Batman",
-      rating: 4.9,
-      discount: 7,
-      fabric: "Organic Cotton",
-      color: "White",
-      design: "Graphic",
-      fit: "Regular",
-      sleeves: "Long",
-      neck: "Round",
-    },
-    {
-      id: 11,
-      img: "../images/similar1.png",
-      hoverImg: "../images/similarback1.png",
-      name: `${title} Classic`,
-      price: 999,
-      size: "M",
-      category: "Hooded T-Shirts",
-      theme: "Batman",
-      rating: 4.5,
-      discount: 10,
-      fabric: "Cotton",
-      color: "Black",
-      design: "Graphic",
-      fit: "Regular",
-      sleeves: "Short",
-      neck: "Round",
-    },
-    {
-      id: 12,
-      img: "../images/similar2.png",
-      hoverImg: "../images/similarback2.jpeg",
-      name: `${title} Premium`,
-      price: 1299,
-      size: "L",
-      category: "Men Co-Ord Sets",
-      theme: "Attack On Titan",
-      rating: 4.2,
-      discount: 15,
-      fabric: "Polyester",
-      color: "Grey",
-      design: "Printed",
-      fit: "Slim",
-      sleeves: "Long",
-      neck: "V-Neck",
-    },
-    {
-      id: 13,
-      img: "../images/similar3.png",
-      hoverImg: "../images/similarback3.png",
-      name: `${title} Street`,
-      price: 1499,
-      size: "S",
-      category: "Oversized Polos",
-      theme: "5 Star",
-      rating: 4.8,
-      discount: 5,
-      fabric: "Cotton",
-      color: "White",
-      design: "Plain",
-      fit: "Oversized",
-      sleeves: "Short",
-      neck: "Polo",
-    },
-    {
-      id: 14,
-      img: "../images/similar4.png",
-      hoverImg: "../images/similarback4.png",
-      name: `${title} Street`,
-      price: 1599,
-      size: "XL",
-      category: "Oversized T-Shirts",
-      theme: "Avatar",
-      rating: 4.1,
-      discount: 20,
-      fabric: "Cotton Blend",
-      color: "Blue",
-      design: "Graphic",
-      fit: "Regular",
-      sleeves: "Short",
-      neck: "Round",
-    },
-    {
-      id: 15,
-      img: "../images/similar5.png",
-      hoverImg: "../images/similarback5.png",
-      name: `${title} Street`,
-      price: 1799,
-      size: "M",
-      category: "Oversized T-Shirts",
-      theme: "Batman",
-      rating: 4.7,
-      discount: 8,
-      fabric: "Cotton",
-      color: "Red",
-      design: "Printed",
-      fit: "Slim",
-      sleeves: "Short",
-      neck: "Crew",
-    },
-    {
-      id: 16,
-      img: "../images/similar1.png",
-      hoverImg: "../images/similarback6.png",
-      name: `${title} Street`,
-      price: 899,
-      size: "S",
-      category: "Hooded T-Shirts",
-      theme: "5 Star",
-      rating: 4.3,
-      discount: 12,
-      fabric: "Fleece",
-      color: "Navy",
-      design: "Plain",
-      fit: "Regular",
-      sleeves: "Long",
-      neck: "Round",
-    },
-    {
-      id: 17,
-      img: "../images/similar2.png",
-      hoverImg: "../images/similarback7.png",
-      name: `${title} Street`,
-      price: 1999,
-      size: "XXL",
-      category: "Oversized Polos",
-      theme: "Avatar",
-      rating: 4.6,
-      discount: 25,
-      fabric: "Pima Cotton",
-      color: "Green",
-      design: "Graphic",
-      fit: "Oversized",
-      sleeves: "Short",
-      neck: "Polo",
-    },
-    {
-      id: 18,
-      img: "../images/similar3.png",
-      hoverImg: "../images/similarback1.png",
-      name: `${title} Street`,
-      price: 1099,
-      size: "L",
-      category: "Men Co-Ord Sets",
-      theme: "Attack On Titan",
-      rating: 4.4,
-      discount: 18,
-      fabric: "Cotton",
-      color: "Black",
-      design: "Printed",
-      fit: "Slim",
-      sleeves: "Short",
-      neck: "V-Neck",
-    },
-    {
-      id: 19,
-      img: "../images/similar4.png",
-      hoverImg: "../images/similarback2.jpeg",
-      name: `${title} Street`,
-      price: 1399,
-      size: "XL",
-      category: "Oversized T-Shirts",
-      theme: "Batman",
-      rating: 4.9,
-      discount: 7,
-      fabric: "Organic Cotton",
-      color: "White",
-      design: "Graphic",
-      fit: "Regular",
-      sleeves: "Long",
-      neck: "Round",
-    },
-    {
-      id: 20,
-      img: "../images/similar5.png",
-      hoverImg: "../images/similarback3.png",
-      name: `${title} Street`,
-      price: 1899,
-      size: "XXL",
-      category: "Oversized T-Shirts",
-      theme: "Batman",
-      rating: 4.9,
-      discount: 7,
-      fabric: "Organic Cotton",
-      color: "White",
-      design: "Graphic",
-      fit: "Regular",
-      sleeves: "Long",
-      neck: "Round",
-    },
+const PRODUCTS = [
+  { id: 1, name: "T-Shirts Classic", brand: "Lionies", price: 999, mrp: 1199, rating: 4.5, reviews: 312, discount: 10, popularity: 88, img: "/images/similar1.png", hoverImg: "/images/similarback1.png", size: "M", color: "Black", fit: "Regular", fabric: "Cotton", design: "Graphic", sleeves: "Short", neck: "Round", subCategory: "Graphic", isNew: true, trending: true, sponsored: false, inStock: true, sizesAvailable: ["S", "M", "L"] },
+  { id: 2, name: "T-Shirts Premium", brand: "Urban Crew", price: 1299, mrp: 1529, rating: 4.2, reviews: 158, discount: 15, popularity: 79, img: "/images/similar2.png", hoverImg: "/images/similarback2.jpeg", size: "L", color: "Grey", fit: "Slim", fabric: "Polyester", design: "Printed", sleeves: "Long", neck: "V-Neck", subCategory: "Printed", isNew: true, trending: false, sponsored: true, inStock: true, sizesAvailable: ["L"] },
+  { id: 3, name: "T-Shirts Street Polo", brand: "Lionies", price: 1499, mrp: 1579, rating: 4.8, reviews: 510, discount: 5, popularity: 96, img: "/images/similar3.png", hoverImg: "/images/similarback3.png", size: "S", color: "White", fit: "Oversized", fabric: "Cotton", design: "Plain", sleeves: "Short", neck: "Polo", subCategory: "Polo", isNew: false, trending: true, sponsored: false, inStock: true, sizesAvailable: ["S", "M"] },
+  { id: 4, name: "T-Shirts Graphic Drop", brand: "Apex Fit", price: 1599, mrp: 1999, rating: 4.1, reviews: 98, discount: 20, popularity: 66, img: "/images/similar4.png", hoverImg: "/images/similarback4.png", size: "XL", color: "Blue", fit: "Regular", fabric: "Cotton Blend", design: "Graphic", sleeves: "Short", neck: "Round", subCategory: "Graphic", isNew: false, trending: false, sponsored: false, inStock: false, sizesAvailable: [] },
+  { id: 5, name: "T-Shirts Bold Print", brand: "Lionies", price: 1799, mrp: 1955, rating: 4.7, reviews: 419, discount: 8, popularity: 90, img: "/images/similar5.png", hoverImg: "/images/similarback5.png", size: "M", color: "Red", fit: "Slim", fabric: "Cotton", design: "Printed", sleeves: "Short", neck: "Crew", subCategory: "Printed", isNew: false, trending: true, sponsored: false, inStock: true, sizesAvailable: ["M", "L", "XL"] },
+  { id: 6, name: "T-Shirts Fleece Hoodie", brand: "Urban Crew", price: 899, mrp: 1022, rating: 4.3, reviews: 222, discount: 12, popularity: 75, img: "/images/similar1.png", hoverImg: "/images/similarback6.png", size: "S", color: "Navy", fit: "Regular", fabric: "Fleece", design: "Plain", sleeves: "Long", neck: "Round", subCategory: "Plain", isNew: true, trending: false, sponsored: false, inStock: true, sizesAvailable: ["S", "M"] },
+  { id: 7, name: "T-Shirts Oversized Polo", brand: "Apex Fit", price: 1999, mrp: 2665, rating: 4.6, reviews: 343, discount: 25, popularity: 93, img: "/images/similar2.png", hoverImg: "/images/similarback7.png", size: "XXL", color: "Green", fit: "Oversized", fabric: "Pima Cotton", design: "Graphic", sleeves: "Short", neck: "Polo", subCategory: "Oversized", isNew: false, trending: true, sponsored: true, inStock: true, sizesAvailable: ["L", "XL", "XXL"] },
+  { id: 8, name: "T-Shirts Printed Essential", brand: "Lionies", price: 1099, mrp: 1340, rating: 4.4, reviews: 277, discount: 18, popularity: 81, img: "/images/similar3.png", hoverImg: "/images/similarback1.png", size: "L", color: "Black", fit: "Slim", fabric: "Cotton", design: "Printed", sleeves: "Short", neck: "V-Neck", subCategory: "Printed", isNew: true, trending: false, sponsored: false, inStock: true, sizesAvailable: ["L", "XL"] },
+];
+
+const FILTER_SECTIONS = [
+  ["subCategory", "Sub Category", ["Polo", "Graphic", "Plain", "Oversized", "Printed"]],
+  ["brand", "Brand", ["Lionies", "Urban Crew", "Apex Fit"]],
+  ["size", "Size", ["S", "M", "L", "XL", "XXL"]],
+  ["color", "Color", ["Black", "White", "Grey", "Blue", "Red", "Navy", "Green"]],
+  ["fit", "Fit", ["Regular", "Slim", "Oversized"]],
+  ["fabric", "Fabric", ["Cotton", "Polyester", "Fleece", "Pima Cotton", "Cotton Blend"]],
+];
+
+const SORT_OPTIONS = [
+  ["recommended", "Recommended"],
+  ["new", "New arrivals"],
+  ["price-low", "Price: Low to High"],
+  ["price-high", "Price: High to Low"],
+  ["discount", "Discount"],
+  ["rating", "Customer rating"],
+  ["popularity", "Popularity"],
+];
+
+const SUBCATEGORY_TILES = [
+  { name: "All", img: "/images/all.webp" },
+  { name: "Polo", img: "/images/similar2.png" },
+  { name: "Graphic", img: "/images/similarback5.png" },
+  { name: "Plain", img: "/images/plain.webp" },
+  { name: "Oversized", img: "/images/Oversized.webp" },
+  { name: "Printed", img: "/images/printed.webp" },
+];
+
+const parseArray = (v) => (v ? v.split(",").filter(Boolean) : []);
+const emptyFilters = () => ({ subCategory: [], brand: [], size: [], color: [], fit: [], fabric: [], price: "", minDiscount: "", minRating: "" });
+
+const ProductListingPage = () => {
+  const location = useLocation();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const source = searchParams.get("source") || location.state?.source || "category_tile";
+
+  const [sortBy, setSortBy] = useState(searchParams.get("sort") || DEFAULT_SORT);
+  const [viewMode, setViewMode] = useState("grid");
+  const [filters, setFilters] = useState(() => ({
+    ...emptyFilters(),
+    subCategory: parseArray(searchParams.get("subCategory") || searchParams.get("subcat")),
+    brand: parseArray(searchParams.get("brand")),
+    size: parseArray(searchParams.get("size")),
+    color: parseArray(searchParams.get("color")),
+    fit: parseArray(searchParams.get("fit")),
+    fabric: parseArray(searchParams.get("fabric")),
+    price: searchParams.get("price") || "",
+    minDiscount: searchParams.get("discount") || "",
+    minRating: searchParams.get("rating") || "",
+  }));
+  const [openFilters, setOpenFilters] = useState({ subCategory: true, brand: true, size: true, color: true, fit: true, fabric: true, price: true, rating: true, discount: true });
+  const [showMobileFilters, setShowMobileFilters] = useState(false);
+  const [loadState, setLoadState] = useState("loading");
+  const [products, setProducts] = useState([]);
+  const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
+  const [wishlist, setWishlist] = useState(() => JSON.parse(localStorage.getItem(WISHLIST_KEY) || "[]"));
+  const [showLoginModal, setShowLoginModal] = useState(false);
+
+  const categoryRef = useRef(location.pathname);
+  const sentinelRef = useRef(null);
+  const isLoggedIn = false;
+
+  const track = (event, payload = {}) => console.info("[analytics]", event, { source, ...payload, ts: Date.now() });
+
+  const loadProducts = () => {
+    const cached = JSON.parse(sessionStorage.getItem(CACHE_KEY) || "null");
+    if (!navigator.onLine) {
+      if (cached?.length) {
+        setProducts(cached);
+        setLoadState("success");
+      } else {
+        setLoadState("offline");
+      }
+      return;
+    }
+
+    setLoadState("loading");
+    window.setTimeout(() => {
+      try {
+        if (searchParams.get("mockError") === "1") throw new Error("api");
+        setProducts(PRODUCTS);
+        sessionStorage.setItem(CACHE_KEY, JSON.stringify(PRODUCTS));
+        setLoadState("success");
+      } catch {
+        if (cached?.length) {
+          setProducts(cached);
+          setLoadState("success");
+        } else {
+          setLoadState("error");
+        }
+      }
+    }, 600);
+  };
+
+  useEffect(() => {
+    loadProducts();
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem(WISHLIST_KEY, JSON.stringify(wishlist));
+  }, [wishlist]);
+
+  useEffect(() => {
+    const params = new URLSearchParams();
+    params.set("source", source);
+    if (sortBy !== DEFAULT_SORT) params.set("sort", sortBy);
+    Object.entries(filters).forEach(([k, v]) => {
+      if (Array.isArray(v) && v.length) params.set(k, v.join(","));
+      if (!Array.isArray(v) && v) params.set(k, v);
+    });
+    setSearchParams(params, { replace: true });
+  }, [filters, sortBy, setSearchParams, source]);
+
+  useEffect(() => {
+    if (categoryRef.current !== location.pathname) {
+      setSortBy(DEFAULT_SORT);
+      categoryRef.current = location.pathname;
+    }
+  }, [location.pathname]);
+
+  useEffect(() => {
+    const key = `plp-scroll-${location.pathname}${location.search}`;
+    const y = Number(sessionStorage.getItem(key) || 0);
+    if (y) window.requestAnimationFrame(() => window.scrollTo(0, y));
+    return () => sessionStorage.setItem(key, String(window.scrollY));
+  }, [location.pathname, location.search]);
+
+  const filtered = useMemo(() => {
+    const priceOk = (p) => {
+      if (!filters.price) return true;
+      if (filters.price === "0-1000") return p <= 1000;
+      if (filters.price === "1001-1500") return p >= 1001 && p <= 1500;
+      if (filters.price === "1501-2000") return p >= 1501 && p <= 2000;
+      return p > 2000;
+    };
+
+    return products
+      .filter((p) =>
+        (!filters.subCategory.length || filters.subCategory.includes(p.subCategory)) &&
+        (!filters.brand.length || filters.brand.includes(p.brand)) &&
+        (!filters.size.length || filters.size.includes(p.size)) &&
+        (!filters.color.length || filters.color.includes(p.color)) &&
+        (!filters.fit.length || filters.fit.includes(p.fit)) &&
+        (!filters.fabric.length || filters.fabric.includes(p.fabric)) &&
+        priceOk(p.price) &&
+        (!filters.minDiscount || p.discount >= Number(filters.minDiscount)) &&
+        (!filters.minRating || p.rating >= Number(filters.minRating))
+      )
+      .sort((a, b) => {
+        if (sortBy === "new") return Number(b.isNew) - Number(a.isNew) || b.id - a.id;
+        if (sortBy === "price-low") return a.price - b.price;
+        if (sortBy === "price-high") return b.price - a.price;
+        if (sortBy === "discount") return b.discount - a.discount;
+        if (sortBy === "rating") return b.rating - a.rating;
+        if (sortBy === "popularity") return b.popularity - a.popularity;
+        return b.popularity - a.popularity || b.rating - a.rating;
+      });
+  }, [filters, products, sortBy]);
+
+  useEffect(() => setVisibleCount(PAGE_SIZE), [filters, sortBy]);
+  useEffect(() => {
+    if (!filtered.length && loadState === "success") track("zero_results", { filters });
+  }, [filtered.length, loadState]);
+
+  useEffect(() => {
+    if (!sentinelRef.current || visibleCount >= filtered.length) return;
+    const observer = new IntersectionObserver((entries) => {
+      if (entries[0]?.isIntersecting) setVisibleCount((n) => Math.min(n + PAGE_SIZE, filtered.length));
+    }, { rootMargin: "220px" });
+    observer.observe(sentinelRef.current);
+    return () => observer.disconnect();
+  }, [filtered.length, visibleCount]);
+
+  const visible = filtered.slice(0, visibleCount);
+  const chips = [
+    ...Object.entries(filters).flatMap(([k, v]) => Array.isArray(v) ? v.map((val) => ({ k, val, label: `${k}: ${val}` })) : (v ? [{ k, val: v, label: `${k}: ${v}` }] : [])),
   ];
 
-  const [viewMode, setViewMode] = useState("grid");
-  const [selectedSize, setSelectedSize] = useState("");
-  const [selectedColor, setSelectedColor] = useState("");
-  const [selectedDesign, setSelectedDesign] = useState("");
-  const [selectedFit, setSelectedFit] = useState("");
-  const [selectedSleeve, setSelectedSleeve] = useState("");
-  const [selectedNeck, setSelectedNeck] = useState("");
-  const [selectedType, setSelectedType] = useState("");
-  const [selectedRating, setSelectedRating] = useState("");
-  const [selectedDiscount, setSelectedDiscount] = useState("");
-  const [selectedFabric, setSelectedFabric] = useState("");
-  const [priceRange, setPriceRange] = useState("");
-  const [sortBy, setSortBy] = useState("");
-  const [selectedNewArrivals, setSelectedNewArrivals] = useState("");
-const [selectedTopRated, setSelectedTopRated] = useState("");
-  const [openFilters, setOpenFilters] = useState({
-    subcat: true,
-    size: true,
-    color: true,
-    design: true,
-    fit: true,
-    sleeves: true,
-    neck: true,
-    type: true,
-    discounts: true,
-    rating: true,
-    fabric: true,
-    price: true,
-    new: true,
-    toprated: true,
-  });
-  const [showMobileFilters, setShowMobileFilters] = useState(false);
-
-  const toggleFilter = (filter) => {
-    setOpenFilters((prev) => ({
-      ...prev,
-      [filter]: !prev[filter],
-    }));
-  };
-
-  const toggleMobileFilters = () => {
-    setShowMobileFilters(!showMobileFilters);
-  };
-
-  const resetFilters = () => {
-    setSelectedSize("");
-    setSelectedColor("");
-    setSelectedDesign("");
-    setSelectedFit("");
-    setSelectedSleeve("");
-    setSelectedNeck("");
-    setSelectedType("");
-    setSelectedRating("");
-    setSelectedDiscount("");
-    setSelectedFabric("");
-    setPriceRange("");
-    setSortBy("");
-    setOpenFilters({});
-  };
-  const filteredProducts = products
-    .filter((p) => {
-      return (
-        (selectedSize ? p.size === selectedSize : true) &&
-        (selectedColor ? p.color === selectedColor : true) &&
-        (selectedDesign ? p.design === selectedDesign : true) &&
-        (selectedFit ? p.fit === selectedFit : true) &&
-        (selectedSleeve ? p.sleeves === selectedSleeve : true) &&
-        (selectedNeck ? p.neck === selectedNeck : true) &&
-        (priceRange
-          ? {
-              "0-1000": p.price <= 1000,
-              "1001-1500": p.price > 1000 && p.price <= 1500,
-              "1501-2000": p.price > 1500 && p.price <= 2000,
-              "2001+": p.price > 2000,
-            }[priceRange]
-          : true) &&
-        (selectedRating ? p.rating >= parseFloat(selectedRating) : true) &&
-        (selectedDiscount ? p.discount >= parseInt(selectedDiscount) : true) &&
-        (selectedFabric ? p.fabric === selectedFabric : true)&&
-
-        (!selectedNewArrivals || selectedNewArrivals === "new") &&
-        (!selectedTopRated || selectedTopRated === "top")
-      );
-    })
-    .sort((a, b) => {
-      if (selectedNewArrivals === "new") return b.id - a.id;
-      if (selectedTopRated === "top") return b.rating - a.rating;
-      
-      switch (sortBy) {
-        case "new":
-          return b.id - a.id;
-        case "top":
-          return b.rating - a.rating;
-        case "price-low":
-          return a.price - b.price;
-        case "price-high":
-          return b.price - a.price;
-        default:
-          return 0;
+  const toggleFilter = (key, value) => {
+    setFilters((prev) => {
+      if (Array.isArray(prev[key])) {
+        const exists = prev[key].includes(value);
+        const next = exists ? prev[key].filter((v) => v !== value) : [...prev[key], value];
+        track("filter_applied", { key, value, selected: !exists });
+        return { ...prev, [key]: next };
       }
+      const next = prev[key] === value ? "" : value;
+      track("filter_applied", { key, value: next || "cleared" });
+      return { ...prev, [key]: next };
     });
+  };
+
+  const clearAll = () => setFilters(emptyFilters());
+  const removeChip = (chip) => toggleFilter(chip.k, chip.val);
+
+  const toggleWishlist = (productId) => {
+    if (!isLoggedIn) {
+      setShowLoginModal(true);
+      track("wishlist_login_prompt", { productId });
+      return;
+    }
+    setWishlist((prev) => prev.includes(productId) ? prev.filter((x) => x !== productId) : [...prev, productId]);
+  };
+
+  if (loadState === "loading") {
+    return <section className="min-h-screen bg-white p-8 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">{Array.from({ length: 8 }).map((_, i) => <div key={i} className="h-80 rounded-xl bg-gray-200 animate-pulse" />)}</section>;
+  }
+
+  if ((loadState === "error" || loadState === "offline") && !products.length) {
+    return (
+      <section className="min-h-screen bg-white p-8 text-center">
+        <FiAlertCircle className="mx-auto w-12 h-12 text-[#995d37]" />
+        <h2 className="mt-4 text-2xl font-bold">{loadState === "offline" ? "No internet" : "API error"}</h2>
+        <p className="mt-2 text-gray-600">Retry or continue with fallback products.</p>
+        <button onClick={loadProducts} className="mt-6 px-6 py-3 rounded-xl bg-[#d18736] text-white font-semibold">Retry</button>
+        <div className="mt-10 grid grid-cols-2 md:grid-cols-4 gap-4">
+          {PRODUCTS.slice(0, 4).map((p) => <div key={p.id} className="border rounded-xl p-3"><img src={p.img} className="h-32 w-full rounded object-cover" /><p className="text-sm mt-2">{p.name}</p></div>)}
+        </div>
+      </section>
+    );
+  }
 
   return (
-    <section className="min-h-screen bg-white py-8">
-      <div className=" px-4 sm:px-6">
-        <div className="w-full h-48 sm:h-64 lg:h-80 mb-8 overflow-hidden">
-          <img
-            src="../images/all.webp"
-            className="w-full h-full object-cover"
-            alt={`${title} Banner`}
-          />
-        </div>
-
-        <div className="overflow-x-auto pb-6 mb-10 -mx-4 sm:-mx-6 lg:mx-0 lg:pb-0 lg:overflow-visible">
-          <div className="flex gap-4 px-4 sm:px-6 lg:px-0 lg:gap-10 min-w-max">
-            {[
-              { name: "All", img: "../images/all.webp" },
-              { name: "Polo", img: "../images/similar2.png" },
-              { name: "Graphic", img: "../images/similarback5.png" },
-              { name: "Plain", img: "../images/plain.webp" },
-              { name: "Oversized", img: "../images/Oversized.webp" },
-              { name: "Printed", img: "../images/printed.webp" },
-            ].map(({ name, img }) => (
+    <section className="min-h-screen bg-white pb-8">
+      <div className="">
+        <div className="w-full h-48 sm:h-64 lg:h-80 mb-6 overflow-hidden"><img src="/images/all.webp" className="w-full h-full object-cover" alt={`${TITLE} Banner`} /></div>
+        <div className="border-b border-gray-200 my-6 py-6 sm:px-6 lg:px-14">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-0 items-start lg:items-center">
+            <nav className="text-sm text-gray-500 flex items-center gap-1 lg:gap-2 flex-wrap">
               <Link
-                key={name}
-                to={`/category/${name.toLowerCase()}`}
-                className="flex flex-col items-center gap-2 px-3 py-4 shrink-0 group hover:scale-105 transition-all duration-300"
-                onClick={() => setSelectedType(name === "All" ? "" : name)}
+                to="/"
+                className="hover:text-gray-900 font-medium transition-colors"
               >
-                <div className="w-16 h-16 sm:w-20 sm:h-20 bg-white/90 backdrop-blur-sm rounded-full overflow-hidden shadow-lg group-hover:shadow-2xl transition-all duration-300">
-                  <img
-                    src={img}
-                    alt={name}
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-                <span className="text-xs sm:text-sm font-semibold text-gray-800 text-center whitespace-nowrap">
-                  {name}
-                </span>
+                Home
               </Link>
-            ))}
-          </div>
-        </div>
+              <span className="hidden sm:inline">/</span>
+              <span>Men</span>
+              <span className="hidden sm:inline">/</span>
+              <span>Clothing</span>
+              <span className="hidden sm:inline">/</span>
+              <span className="text-gray-900 font-semibold truncate max-w-[200px] sm:max-w-none">
+                {TITLE}
+              </span>
+            </nav>
 
-        <div className="flex flex-col lg:flex-row justify-between items-center gap-6 mb-10 pb-6 border-b border-gray-100">
-          <button
-            onClick={toggleMobileFilters}
-            className="lg:hidden self-start px-8 py-3 bg-linear-to-r from-[#d18736] to-[#995d37] text-white rounded-2xl font-bold text-sm uppercase tracking-wide hover:from-[#995d37] hover:to-[#d18736] transition-all duration-300 shadow-xl hover:shadow-2xl hover:scale-105 transform"
-          >
-            Filters
-          </button>
-          <span className="font-bold text-lg text-gray-900 tracking-tight">
-            {filteredProducts.length} Products
-          </span>
-          <div className="hidden lg:flex items-center gap-3">
-            <div className="flex gap-1 p-1.5 bg-gray-100/50 backdrop-blur-sm rounded-2xl shadow-sm border border-gray-200 hover:shadow-md transition-all duration-200">
-              <button
-                onClick={() => setViewMode("grid")}
-                className={`p-3 rounded-xl transition-all flex items-center justify-center group hover:scale-105 ${
-                  viewMode === "grid"
-                    ? "bg-linear-to-r from-[#d18736] to-[#995d37] text-white shadow-lg scale-105 active:scale-100"
-                    : "text-gray-600 hover:text-[#d18736] hover:bg-white hover:shadow-md bg-white/80"
-                }`}
-                title="Grid View"
-                aria-label="Grid View"
-              >
-                <FiGrid
-                  size={18}
-                  className="group-active:scale-90 transition-transform"
-                />
-              </button>
-              <button
-                onClick={() => setViewMode("list")}
-                className={`p-3 rounded-xl transition-all flex items-center justify-center group hover:scale-105 ${
-                  viewMode === "list"
-                    ? "bg-linear-to-r from-[#d18736] to-[#995d37] text-white shadow-lg scale-105 active:scale-100"
-                    : "text-gray-600 hover:text-[#d18736] hover:bg-white hover:shadow-md bg-white/80"
-                }`}
-                title="List View"
-                aria-label="List View"
-              >
-                <FiList
-                  size={18}
-                  className="group-active:scale-90 transition-transform"
-                />
-              </button>
+            <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 justify-end sm:items-center text-right sm:text-left">
+              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black text-gray-900 leading-tight">
+                {TITLE}
+              </h1>
+              <p className="text-lg sm:text-xl text-gray-500 bg-gray-100 px-3 py-1 rounded-full font-medium min-w-[90px]">
+                {filtered.length} products
+              </p>
             </div>
-
-            <select
-              value={sortBy}
-              onChange={(e) => setSortBy(e.target.value)}
-              className="ml-3 px-5 ps-1 py-2 bg-transparent border text-sm font-semibold text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#d18736]/50 rounded-md cursor-pointer hover:text-[#d18736] transition-colors"
-            >
-              <option value="">Sort</option>
-              <option value="new">New Arrivals</option>
-              <option value="top">Top Rated</option>
-              <option value="price-low">Price: Low → High</option>
-              <option value="price-high">Price: High → Low</option>
-            </select>
-            {selectedSize && (
-              <span className="px-3 py-1 bg-[#d18736]/10 text-[#d18736] text-xs font-semibold rounded-full">
-                {selectedSize}
-              </span>
-            )}
-            {selectedColor && (
-              <span className="px-3 py-1 bg-[#d18736]/10 text-[#d18736] text-xs font-semibold rounded-full">
-                {selectedColor}
-              </span>
-            )}
-            {priceRange && (
-              <span className="px-3 py-1 bg-[#d18736]/10 text-[#d18736] text-xs font-semibold rounded-full">
-                ₹{priceRange}
-              </span>
-            )}
-            <button
-              onClick={resetFilters}
-              className="ml-4 px-4 py-2 text-sm font-semibold text-gray-600 hover:text-[#d18736] hover:bg-gray-100 rounded-xl transition-all duration-200"
-            >
-              Clear All
-            </button>
           </div>
         </div>
 
-        <div className="flex flex-col lg:flex-row gap-8">
-          <aside
-            className={`w-full sidebar lg:w-80 xl:w-96 order-2 lg:order-1 transition-all duration-300 ${
-              showMobileFilters ? "block" : "lg:block"
-            } lg:sticky lg:top-24 self-start`}
-          >
-            <div className="bg-white p-6 lg:p-8 border border-gray-100  sticky lg:static top-0">
-              {!showMobileFilters && (
-                <h2 className="text-3xl font-bold mb-8 text-gray-900 border-b pb-6 flex items-center gap-3">
-                  <CiFilter className="w-7 h-7 text-[#d18736]" />
-                  Filters
-                </h2>
-              )}
-
-              {[
-                {
-                  id: "subcat",
-                  title: "Sub Categories",
-                  options: ["Polo", "Graphic", "Plain", "Oversized"],
-                },
-                {
-                  id: "size",
-                  title: "Size",
-                  options: ["XS", "S", "M", "L", "XL", "XXL"],
-                },
-                {
-                  id: "color",
-                  title: "Color",
-                  options: [
-                    "Black",
-                    "White",
-                    "Grey",
-                    "Blue",
-                    "Red",
-                    "Navy",
-                    "Green",
-                  ],
-                },
-                {
-                  id: "design",
-                  title: "Design",
-                  options: ["Graphic", "Printed", "Plain"],
-                },
-                {
-                  id: "fit",
-                  title: "Fit",
-                  options: ["Regular", "Slim", "Oversized"],
-                },
-                {
-                  id: "sleeves",
-                  title: "Sleeves",
-                  options: ["Short", "Long", "Sleeveless"],
-                },
-                {
-                  id: "neck",
-                  title: "Neck",
-                  options: ["Round", "V-Neck", "Polo", "Crew"],
-                },
-                {
-                  id: "type",
-                  title: "Type",
-                  options: ["Casual", "Formal", "Sports"],
-                },
-                { id: "rating", title: "Rating", options: ["4+", "4.5+", "5"] },
-                {
-                  id: "discounts",
-                  title: "Discounts",
-                  options: ["10%+", "20%+", "30%+"],
-                },
-                {
-                  id: "fabric",
-                  title: "Fabric",
-                  options: ["Cotton", "Polyester", "Fleece", "Pima Cotton"],
-                },
-                {
-                  id: "price",
-                  title: "Price Range",
-                  options: ["0-1000", "1001-1500", "1501-2000", "2001+"],
-                },
-                {
-                  id: "new",
-                  title: "New Arrivals",
-                  options: ["Last 7 Days", "Last 30 Days", "This Month"],
-                },
-                {
-                  id: "toprated",
-                  title: "Top Rated",
-                  options: ["4 Stars & Up", "4.5 Stars & Up", "5 Stars"],
-                },
-              ].map(({ id, title, options }) => (
-                <div
-                  key={id}
-                  className="mb-6 last:mb-0 border-b pb-6 last:border-b-0"
+        <div className="flex flex-col px-10 lg:flex-row justify-between mt-5 items-start lg:items-center gap-4 mb-6 pb-4 border-b border-gray-200">
+          <div className="overflow-x-auto mb-6 -mx-4 sm:-mx-6 lg:mx-0 lg:pb-0 lg:overflow-visible">
+            <div className="flex gap-4 px-4 sm:px-6 lg:px-0 min-w-max">
+              {SUBCATEGORY_TILES.map((tile) => (
+                <button
+                  key={tile.name}
+                  type="button"
+                  className="flex flex-col items-center gap-2 px-2 py-1 shrink-0"
+                  onClick={() => {
+                    if (tile.name === "All") return setFilters((prev) => ({ ...prev, subCategory: [] }));
+                    toggleFilter("subCategory", tile.name);
+                  }}
                 >
-                  <button
-                    onClick={() => toggleFilter(id)}
-                    className="w-full flex items-center justify-between cursor-pointer rounded-2xl transition-all group"
-                  >
-                    <div className="flex items-center gap-4">
-                      <div
-                        className={`w-3 h-3 rounded-full bg-linear-to-r from-[#d18736] to-[#995d37] ${openFilters[id] ? "scale-110 shadow-lg" : ""}`}
-                      ></div>
-                      <span className="font-semibold text-lg text-gray-900 group-hover:text-[#d18736]">
-                        {title}
-                      </span>
-                    </div>
-                    <FiChevronDown
-                      className={`w-5 h-5 transition-transform duration-300 ${openFilters[id] ? "rotate-180" : ""}`}
-                    />
-                  </button>
+                  <span className="w-14 h-14 rounded-full overflow-hidden shadow">
+                    <img src={tile.img} alt={tile.name} className="w-full h-full object-cover" loading="lazy" />
+                  </span>
+                  <span className="text-xs font-semibold text-gray-700">{tile.name}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+          <button className="lg:hidden px-4 py-2 rounded-lg bg-[#d18736] text-white font-semibold" onClick={() => setShowMobileFilters((v) => !v)}>Filter</button>
+          <div className="hidden lg:flex items-center gap-3">
+            <div className="flex gap-1 p-1 rounded-xl"><button onClick={() => setViewMode("grid")} className={`p-2 rounded ${viewMode === "grid" ? "bg-[#d18736] text-white" : ""}`}><FiGrid /></button><button onClick={() => setViewMode("list")} className={`p-2 rounded ${viewMode === "list" ? "bg-[#d18736] text-white" : ""}`}><FiList /></button></div>
+            <select value={sortBy} onChange={(e) => { setSortBy(e.target.value); track("sort_changed", { sortBy: e.target.value }); }} className="px-3 py-2 border rounded-md text-sm">
+              {SORT_OPTIONS.map(([id, label]) => <option key={id} value={id}>{label}</option>)}
+            </select>
+          </div>
+        </div>
+        {chips.length > 0 && (
+          <div className="flex flex-wrap gap-2 mb-6 lg:px-5 px-6">{chips.map((chip) => <button key={`${chip.k}-${chip.val}`} onClick={() => removeChip(chip)} className="px-3 py-1 rounded-full text-xs bg-[#d18736]/10 text-[#d18736]">{chip.label} x</button>)}<button onClick={clearAll} className="px-3 py-1 rounded-full text-xs bg-gray-100">Clear all</button></div>
+        )}
 
-                  {openFilters[id] && (
-                    <div className="mt-5 pl-8 space-y-3 animate-in slide-in-from-top-4 duration-300">
-                      {id === "size" && (
-                        <div className="flex flex-wrap gap-2">
-                          {["XS", "S", "M", "L", "XL", "XXL"].map((s) => (
-                            <button
-                              key={s}
-                              onClick={() =>
-                                setSelectedSize((prev) => (prev === s ? "" : s))
-                              }
-                              className={`px-4 py-2 rounded-xl text-sm font-medium border-2 transition-all shadow-sm ${
-                                selectedSize === s
-                                  ? "bg-[#d18736] text-white border-[#d18736] shadow-md scale-105"
-                                  : "border-gray-300 hover:border-[#d18736] hover:shadow-md hover:scale-105"
-                              }`}
-                            >
-                              {s}
-                            </button>
-                          ))}
-                        </div>
-                      )}
-
-                      {id === "color" && (
-                        <div className="flex flex-wrap gap-3">
-                          {[
-                            "Black",
-                            "White",
-                            "Grey",
-                            "Blue",
-                            "Red",
-                            "Navy",
-                            "Green",
-                          ].map((c) => (
-                            <button
-                              key={c}
-                              onClick={() =>
-                                setSelectedColor((prev) =>
-                                  prev === c ? "" : c,
-                                )
-                              }
-                              className={`w-10 h-10 rounded-2xl shadow-lg hover:shadow-xl transition-all border-4 ${
-                                selectedColor === c
-                                  ? "border-[#d18736] scale-110"
-                                  : "border-white hover:border-[#d18736] hover:scale-105"
-                              }`}
-                              style={{ backgroundColor: c.toLowerCase() }}
-                            />
-                          ))}
-                        </div>
-                      )}
-
-                      {id === "price" && (
-                        <div className="space-y-3">
-                          {[
-                            { val: "0-1000", label: "Under ₹1,000" },
-                            { val: "1001-1500", label: "₹1,001 - ₹1,500" },
-                            { val: "1501-2000", label: "₹1,501 - ₹2,000" },
-                            { val: "2001+", label: "₹2,000+" },
-                          ].map(({ val, label }) => (
-                            <label
-                              key={val}
-                              className="flex items-center p-3 rounded-xl hover:bg-gray-50 cursor-pointer transition-all"
-                            >
-                              <input
-                                type="radio"
-                                name="price"
-                                className="mr-3 w-5 h-5 accent-[#d18736] shadow-sm"
-                                checked={priceRange === val}
-                                onChange={() =>
-                                  setPriceRange((prev) =>
-                                    prev === val ? "" : val,
-                                  )
-                                }
-                              />
-                              <span className="text-sm font-medium">
-                                {label}
-                              </span>
-                            </label>
-                          ))}
-                        </div>
-                      )}
-
-                      {options.length > 0 &&
-                        id !== "size" &&
-                        id !== "color" &&
-                        id !== "price" && (
-                          <div className="space-y-2 max-h-40 overflow-y-auto">
-                            {options.map((option) => (
-                              <label
-                                key={option}
-                                className="flex items-center p-2 rounded-lg hover:bg-gray-50 cursor-pointer transition-all"
-                              >
-                                <input
-                                  type="checkbox"
-                                  className="mr-3 w-4 h-4 accent-[#d18736]"
-                                  onChange={() => {
-                                    if (id === "rating")
-                                      setSelectedRating((prev) =>
-                                        prev === option ? "" : option,
-                                      );
-                                    if (id === "discounts")
-                                      setSelectedDiscount((prev) =>
-                                        prev === option ? "" : option,
-                                      );
-                                  }}
-                                />
-                                <span className="text-sm">{option}</span>
-                              </label>
-                            ))}
-                          </div>
-                        )}
-
-                     
-                    </div>
-                  )}
+        <div className="flex flex-col lg:flex-row gap-8 lg:px-5 px-6">
+          <aside className={`w-full lg:w-64 ${showMobileFilters ? "block" : "hidden lg:block"}`}>
+            <div className="bg-white p-6 border-r border-gray-200 lg:sticky lg:top-4">
+              <h2 className="text-2xl font-bold mb-6 flex items-center gap-2"><CiFilter />Filters</h2>
+              {FILTER_SECTIONS.map(([key, label, options]) => (
+                <div key={key} className="mb-5 border-b pb-4 border-gray-200">
+                  <button className="w-full flex items-center justify-between font-semibold" onClick={() => setOpenFilters((s) => ({ ...s, [key]: !s[key] }))}>{label}<FiChevronDown className={openFilters[key] ? "rotate-180 transition-transform" : "transition-transform"} /></button>
+                  {openFilters[key] && <div className="mt-3 space-y-2">{options.map((op) => <label key={op} className="flex items-center text-sm"><input type="checkbox" className="mr-2 accent-[#d18736]" checked={filters[key].includes(op)} onChange={() => toggleFilter(key, op)} />{op}</label>)}</div>}
                 </div>
               ))}
-
-              {showMobileFilters && (
-                <button
-                  onClick={toggleMobileFilters}
-                  className="mt-8 w-full bg-gray-100 text-gray-700 py-4 px-6 rounded-2xl font-semibold hover:bg-gray-200 transition-all shadow-lg"
-                >
-                  Close Filters
-                </button>
-              )}
-
-              <button
-                onClick={resetFilters}
-                className="mt-6 w-full border-2 border-[#d18736] text-[#d18736] py-3 px-6 rounded-2xl font-semibold hover:bg-[#d18736] hover:text-white transition-all shadow-lg"
-              >
-                Clear All Filters
-              </button>
+              <div className="mb-5 border-b border-gray-200 pb-4"><p className="font-semibold mb-2">Price</p>{["0-1000", "1001-1500", "1501-2000", "2001+"].map((v) => <label key={v} className="block text-sm mb-2"><input type="radio" className="mr-2 accent-[#d18736]" checked={filters.price === v} onChange={() => toggleFilter("price", v)} />{v}</label>)}</div>
+              <div className="mb-5 border-b border-gray-200 pb-4"><p className="font-semibold mb-2">Discount</p>{["10", "20", "30"].map((v) => <label key={v} className="block text-sm mb-2"><input type="radio" className="mr-2 accent-[#d18736]" checked={filters.minDiscount === v} onChange={() => toggleFilter("minDiscount", v)} />{v}%+</label>)}</div>
+              <div className="mb-6"><p className="font-semibold mb-2">Rating</p>{["4", "4.5", "5"].map((v) => <label key={v} className="block text-sm mb-2"><input type="radio" className="mr-2 accent-[#d18736]" checked={filters.minRating === v} onChange={() => toggleFilter("minRating", v)} />{v}+</label>)}</div>
+              <div className="flex gap-2"><button onClick={clearAll} className="w-full py-2 border border-[#d18736] text-[#d18736] rounded-lg">Reset</button><button onClick={() => setShowMobileFilters(false)} className="w-full py-2 rounded-lg bg-[#d18736] text-white lg:hidden">Apply</button></div>
             </div>
           </aside>
 
-          <main className="w-full lg:flex-1 order-1 lg:order-2">
-            {showMobileFilters && (
-              <div
-                className="fixed inset-0 bg-black/50 z-40 lg:hidden"
-                onClick={toggleMobileFilters}
-              />
-            )}
-            <div
-              className={`grid gap-6 ${
-                viewMode === "grid"
-                  ? "grid-cols-2 md:grid-cols-3 lg:grid-cols-3"
-                  : "grid-cols-1 divide-y-2 divide-gray-100"
-              }`}
-            >
-              {filteredProducts.map((p) => (
-                <div key={p.id} className="group cursor-pointer">
-                  <Link to={`/checkout`} className="block overflow-hidden ">
-                    <div className="relative h-64 md:h-72 lg:h-80 ">
-                      <div className="absolute top-0 left-0 z-20">
-                        <span className="text-white text-xs px-3 py-1.5 font-bold bg-linear-to-r from-green-500 to-green-600">
-                          -{p.discount}%
-                        </span>
+          <main className="w-full lg:flex-1">
+            {filtered.length === 0 ? (
+              <div className="text-center py-20 border rounded-2xl"><FiSearch className="mx-auto w-10 h-10 text-gray-400" /><h3 className="mt-4 text-2xl font-bold">No products found</h3><p className="text-gray-600 mt-2">Try removing filters or view trending items.</p><div className="mt-6 flex justify-center gap-3"><button onClick={clearAll} className="px-5 py-2 rounded-lg bg-[#d18736] text-white">Remove filters</button><button onClick={() => setSortBy("popularity")} className="px-5 py-2 rounded-lg border border-[#d18736] text-[#d18736]">Show trending</button></div></div>
+            ) : (
+              <div className={`grid gap-6 ${viewMode === "grid" ? "grid-cols-2 md:grid-cols-3 lg:grid-cols-4" : "grid-cols-1 divide-y"}`}>
+                {visible.map((p, idx) => (
+                  <div key={p.id} className="group">
+                    <Link
+                      to={`/product/${p.id}`}
+                      state={{ returnTo: `${location.pathname}${location.search}` }}
+                      className="block"
+                      onClick={() => track("product_click", { productId: p.id, index: idx + 1 })}
+                    >
+                      <div className="relative h-72 overflow-hidden">
+                        <div className="absolute top-2 left-2 z-20 flex flex-col gap-1"><span className="px-2 py-1 text-xs text-white bg-green-600 rounded">-{p.discount}%</span>{p.trending && <span className="px-2 py-1 text-xs text-white bg-black/80 rounded">Trending</span>}{p.isNew && <span className="px-2 py-1 text-xs text-white bg-blue-600 rounded">New</span>}{p.sponsored && <span className="px-2 py-1 text-xs bg-white rounded">Sponsored</span>}</div>
+                        <div className="absolute top-2 right-2 z-20 flex flex-col gap-2"><button type="button" className="p-2 rounded-lg bg-white shadow" onClick={(e) => { e.preventDefault(); toggleWishlist(p.id); }}><FiHeart className={wishlist.includes(p.id) ? "text-red-500 fill-red-500" : "text-gray-800"} /></button></div>
+                        <img src={p.img} alt={p.name} loading="lazy" className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                        <img src={p.hoverImg} alt={`${p.name} hover`} loading="lazy" className="absolute inset-0 w-full h-full object-cover opacity-0 group-hover:opacity-100 transition-all duration-500" />
                       </div>
-
-                      <div className="absolute top-12 right-[-100px] group-hover:right-3 transition-all duration-500 flex flex-col gap-2 z-30">
-                        <div className="relative group/cart">
-                          <div className="bg-white p-2.5 rounded-2xl shadow-xl hover:bg-gray-50 transition-all duration-300 hover:scale-110">
-                            <BsCart size={18} className="text-gray-800" />
-                          </div>
-                          <span
-                            className="absolute -right-32 top-1/2 -translate-y-1/2 bg-black text-white text-xs px-3 py-1.5 rounded-lg opacity-0 
-                                                          group-hover/cart:opacity-100 transition-all duration-300 whitespace-nowrap shadow-2xl z-10"
-                          >
-                            Add to Cart
-                          </span>
-                        </div>
-
-                        <div className="relative group/qv">
-                          <div className="bg-white p-2.5 rounded-2xl shadow-xl hover:bg-gray-50 transition-all duration-300 hover:scale-110">
-                            <svg
-                              className="w-5 h-5 text-gray-800"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                              />
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
-                              />
-                            </svg>
-                          </div>
-                          <span
-                            className="absolute -right-32 top-1/2 -translate-y-1/2 bg-black text-white text-xs px-3 py-1.5 rounded-lg opacity-0 
-                                                          group-hover/qv:opacity-100 transition-all duration-300 whitespace-nowrap shadow-2xl z-10"
-                          >
-                            Quick View
-                          </span>
-                        </div>
-                      </div>
-
-                      <img
-                        src={p.img}
-                        className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
-                        alt={p.name}
-                      />
-                      <img
-                        src={p.hoverImg}
-                        className="absolute inset-0 w-full h-full object-cover opacity-0 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700 ease-out"
-                        alt={p.name}
-                      />
-                    </div>
-
-                    <div className="p-4 pt-3">
-                      <h3 className="font-semibold text-sm lg:text-base text-gray-900 mb-2 truncate leading-tight">
-                        {p.name}
-                      </h3>
-                      <div className="flex items-center space-x-2">
-                        <span className="text-lg lg:text-xl font-bold text-[#633426] tracking-tight">
-                          ₹{p.price.toLocaleString()}
-                        </span>
-                        <span className="text-xs text-gray-400 line-through">
-                          ₹{(p.price * 1.2).toLocaleString()}
-                        </span>
-                      </div>
-                    </div>
-                  </Link>
-                </div>
-              ))}
-            </div>
-
-            {filteredProducts.length === 0 && (
-              <div className="text-center py-32 px-4">
-                <div className="w-28 h-28 mx-auto mb-8 bg-linear-to-br from-gray-100 via-white to-gray-100 rounded-3xl flex items-center justify-center shadow-2xl border-4 border-dashed border-gray-300">
-                  <FiSearch className="w-12 h-12 text-gray-400" />
-                </div>
-                <h3 className="text-3xl md:text-4xl font-black text-gray-900 mb-4 leading-tight">
-                  No products found
-                </h3>
-                <p className="text-lg md:text-xl text-gray-600 max-w-md mx-auto mb-10 leading-relaxed">
-                  Try adjusting your filters or browse other categories.
-                </p>
-                <button
-                  onClick={resetFilters}
-                  className="px-10 py-4 bg-linear-to-r from-[#d18736] to-[#995d37] text-white rounded-2xl font-bold text-lg uppercase tracking-wide hover:from-[#995d37] hover:to-[#d18736] transition-all duration-300 shadow-2xl hover:shadow-3xl hover:scale-105 transform"
-                >
-                  Explore All Products
-                </button>
+                      <div className="pt-3"><p className="text-xs uppercase text-gray-500 font-semibold">{p.brand}</p><h3 className="font-semibold text-sm mt-1 truncate">{p.name}</h3><div className="mt-2 flex items-center gap-2"><span className="font-bold text-[#633426]">INR {p.price}</span><span className="text-xs text-gray-400 line-through">INR {p.mrp}</span></div><div className="mt-2 flex items-center justify-between text-xs"><span className="flex items-center gap-1 text-gray-600"><FiStar className="text-yellow-500" />{p.rating} ({p.reviews})</span>{!p.inStock && <span className="text-red-600 font-semibold">Out of stock</span>}{p.inStock && p.sizesAvailable.length === 1 && <span className="text-orange-600 font-semibold">Only 1 size left</span>}</div></div>
+                    </Link>
+                  </div>
+                ))}
               </div>
             )}
+            <div ref={sentinelRef} className="h-6" />
+            {visibleCount < filtered.length && <div className="text-center mt-8"><button onClick={() => setVisibleCount((n) => Math.min(n + PAGE_SIZE, filtered.length))} className="px-6 py-2 rounded-lg border border-[#d18736] text-[#d18736]">Load more</button></div>}
           </main>
         </div>
 
-        {showMobileFilters && (
-          <button
-            className="fixed bottom-6 right-6 lg:hidden w-16 h-16 bg-[#d18736] text-white rounded-2xl shadow-2xl hover:shadow-3xl transition-all duration-300 z-50 flex items-center justify-center text-2xl"
-            onClick={toggleMobileFilters}
-          >
-            ×
-          </button>
+        {showLoginModal && (
+          <div className="fixed inset-0 z-50 bg-black/40 flex items-center justify-center p-4">
+            <div className="bg-white rounded-xl p-6 w-full max-w-sm"><h4 className="text-xl font-bold">Login required</h4><p className="mt-2 text-gray-600">Please login to add wishlist items.</p><div className="mt-5 flex gap-3"><button className="w-full py-2 rounded-lg bg-[#d18736] text-white">Login</button><button onClick={() => setShowLoginModal(false)} className="w-full py-2 rounded-lg border">Cancel</button></div></div>
+          </div>
         )}
       </div>
     </section>

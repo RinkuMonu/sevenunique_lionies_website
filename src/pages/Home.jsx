@@ -8,15 +8,21 @@ import HoddiesSection from "../components/Home/HoddiesSection";
 import CasualTrousers from "../components/Home/CasualTrousers";
 import Blazercoat from "../components/Home/Blazercoat";
 import DesignerShirts from "../components/Home/Kurtasets";
+import CountdownBanner from "../components/Home/BlackFriday";
+import BrandsSection from "../components/Home/Brands";
+import Discount from "../components/Home/Discount";
 export default function Home() {
   return (
     <>
       <HeroBanner />
       <TopProducts />
+      <BrandsSection />
+      <CategoriesSection />
+      <Discount />
       <PopularProducts />
       <JoggersSection />
+      <CountdownBanner />
       <TrendingCategorie />
-      <CategoriesSection />
       <HoddiesSection />
       <CasualTrousers />
       <Blazercoat />

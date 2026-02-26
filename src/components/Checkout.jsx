@@ -1,30 +1,44 @@
-import { useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Payment from "../components/cart/Payment.jsx";
 import Address from "../components/cart/Address.jsx";
 import Delivery from "../components/cart/Delivery.jsx"; 
 
+const INITIAL_CART = [
+  { id: 1, name: "DR CRZ Jacket", price: 235, qty: 1, image: "../extra/wo1.png" },
+  { id: 2, name: "Solid White Graphic Tee", price: 397, qty: 1, image: "/image/tee1.jpg" },
+];
+
+const SHIPPING = 6;
+const VALID_COUPON = "SAVE10";
+
 const CheckoutPage = () => {
-  const [cart, setCart] = useState([
-    { id: 1, name: "DR CRZ Jacket", price: 235, qty: 1, image:  "../extra/wo1.png"},
-    { id: 2, name: "Solid White Graphic Tee", price: 397, qty: 1, image: "/image/tee1.jpg" },
-  ]);
+  const [cart, setCart] = useState(INITIAL_CART);
 
 
   
   const [coupon, setCoupon] = useState("");
   const [discount, setDiscount] = useState(0);
   const [couponApplied, setCouponApplied] = useState(false);
-  const [showLottie, setShowLottie] = useState(false); // ✅ REQUIRED
+  const [showLottie, setShowLottie] = useState(false); 
+  const lottieTimeoutRef = useRef(null);
 
-  const increaseQty = (id) => {
+  useEffect(() => {
+    return () => {
+      if (lottieTimeoutRef.current) {
+        clearTimeout(lottieTimeoutRef.current);
+      }
+    };
+  }, []);
+
+  const increaseQty = useCallback((id) => {
     setCart((prev) =>
       prev.map((item) =>
         item.id === id ? { ...item, qty: item.qty + 1 } : item
       )
     );
-  };
+  }, []);
 
-  const decreaseQty = (id) => {
+  const decreaseQty = useCallback((id) => {
     setCart((prev) =>
       prev.map((item) =>
         item.id === id && item.qty > 1
@@ -32,31 +46,31 @@ const CheckoutPage = () => {
           : item
       )
     );
-  };
+  }, []);
 
-  const subtotal = cart.reduce(
-    (total, item) => total + item.price * item.qty,
-    0
+  const subtotal = useMemo(
+    () => cart.reduce((total, item) => total + item.price * item.qty, 0),
+    [cart]
   );
+  const total = useMemo(() => subtotal + SHIPPING - discount, [subtotal, discount]);
 
-  const shipping = 6;
-  const total = subtotal + shipping - discount;
-
-  const applyCoupon = () => {
-    if (coupon === "SAVE10" && !couponApplied) {
+  const applyCoupon = useCallback(() => {
+    if (coupon.trim() === VALID_COUPON && !couponApplied) {
       setDiscount(subtotal * 0.1);
       setCouponApplied(true);
       setShowLottie(true);
 
-      setTimeout(() => {
+      if (lottieTimeoutRef.current) {
+        clearTimeout(lottieTimeoutRef.current);
+      }
+      lottieTimeoutRef.current = setTimeout(() => {
         setShowLottie(false);
       }, 2500);
     }
-  };
+  }, [coupon, couponApplied, subtotal]);
 
   return (
     <>
-      {/* 🎉 LOTTIE CELEBRATION */}
       {showLottie && (
         <div className="fixed inset-0 z-9999 flex items-center justify-center bg-black/10">
           <iframe
@@ -141,7 +155,7 @@ const CheckoutPage = () => {
                     disabled={couponApplied}
                     className="px-4 py-2 text-xs border rounded-lg hover:border-black disabled:opacity-50"
                   >
-                    Apply
+                    Apply in this page i want to show Bag section like image than i click 
                   </button>
                 </div>
 
@@ -152,7 +166,7 @@ const CheckoutPage = () => {
                   </div>
                   <div className="flex justify-between">
                     <span>Shipping</span>
-                    <span>${shipping.toFixed(2)}</span>
+                    <span>${SHIPPING.toFixed(2)}</span>
                   </div>
                   {discount > 0 && (
                     <div className="flex justify-between text-green-600">
