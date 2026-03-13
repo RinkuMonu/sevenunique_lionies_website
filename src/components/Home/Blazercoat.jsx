@@ -86,7 +86,7 @@ const Blazercoat = () => {
     return (
         <>
 
-            <div className="max-w-7xl mx-auto px-6 py-10">
+            <div className="mx-auto px-8 py-10">
                 <div className="flex items-center justify-between mb-8">
                     <div>
                         <h2 className="text-2xl md:text-3xl font-bold text-gray-900">Blazer and Coat</h2>
@@ -112,7 +112,7 @@ const Blazercoat = () => {
                                     className="w-full absolute top-0 left-0 opacity-0 group-hover:opacity-100 transition duration-500"
                                 />
 
-                                <div className="absolute top-3 right-[-60px] group-hover:right-3 transition-all duration-500 flex flex-col gap-2">
+                                <div className="absolute top-3 -right-15 group-hover:right-3 transition-all duration-500 flex flex-col gap-2">
                                     <div className="relative group/cart">
                                         <div className="bg-white p-2 rounded-full shadow-lg cursor-pointer hover:bg-gray-50 transition-colors duration-200">
                                             <BsCart size={18} className="text-gray-800" />

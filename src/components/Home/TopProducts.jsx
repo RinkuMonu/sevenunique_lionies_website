@@ -54,10 +54,10 @@ const TopProducts = React.memo(function TopProducts() {
 
     return (
         <>
-            <div className="max-w-7xl mx-auto px-6 py-10">
+            <div className=" mx-auto px-8 py-10">
                 <div className="flex items-center justify-between mb-8">
                     <div>
-                        <h2 className="text-2xl md:text-3xl font-bold text-gray-900">Top Rated Products</h2>
+                        <h2 className="text-2xl md:text-3xl font-bold text-gray-900">Top Summer Products</h2>
                         <span className="text-sm text-gray-500">Shop now for ultimate comfort</span>
                     </div>
                     <Link to="/productlist" className="text-[#633426] font-semibold text-sm hover:text-orange-600 transition">
@@ -91,7 +91,7 @@ const TopProducts = React.memo(function TopProducts() {
                                     </span>
                                 </Link>
 
-                                <div className="absolute top-3 right-[-60px] group-hover:right-3 transition-all duration-500">
+                                <div className="absolute top-3 -right-15 group-hover:right-3 transition-all duration-500">
                                     <button
                                         type="button"
                                         onClick={() => handleAddToCart(product)}

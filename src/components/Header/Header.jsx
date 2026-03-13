@@ -19,6 +19,7 @@ import { MdKeyboardArrowDown } from "react-icons/md";
 
 const MENU_LINKS = [
   { to: "/", label: "Home" },
+  { to: "/kids", label: "Kids" },
   { to: "/productlist", label: "Mens" },
   { to: "/new-arrivals", label: "New Arrivals" },
   { to: "/brands", label: "Brands" },
@@ -52,8 +53,8 @@ const MEN_CATEGORY_DATA = {
 };
 
 const TOP_CATEGORIES = [
-  { name: "Joggers", image: "../images/23.jpg" },
-  { name: "T-Shirts", image: "../images/plain.webp" },
+  { name: "Kids", image: "../images/Kids/B1.webp" },
+  { name: "T-Shirts", image: "../images/23.jpg" },
   { name: "Hoodies", image: "../images/hoddies.webp" },
   { name: "Track Pants", image: "../images/22.webp" },
   { name: "Shorts", image: "../images/26.jpg" },
@@ -151,8 +152,8 @@ export default function Header() {
       </div>
 
       <header
-        className={`w-full left-0 right-0 z-50 transition-all duration-300 shadow-xl
-        ${isSticky ? "fixed top-0 shadow-xl" : "relative"} 
+        className={`w-full left-0 right-0 z-50 transition-all duration-300 shadow-md
+        ${isSticky ? "fixed top-0" : "relative"} 
         ${isVisible ? "translate-y-0" : "-translate-y-full"}`}
       >
         <div
@@ -174,7 +175,7 @@ export default function Header() {
                     className="flex items-center gap-1.5 px-3 py-2 rounded-lg transition-all group-hover:text-[#d6b28a]"
                   >
                     <span>{label}</span>
-                    {to !== "/" && <MdKeyboardArrowDown />}
+                    {to !== "/" && to !== "/kids" && <MdKeyboardArrowDown />}
                   </Link>
 
                   {to === "/new-arrivals" && (

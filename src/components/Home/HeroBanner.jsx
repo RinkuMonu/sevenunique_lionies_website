@@ -46,28 +46,28 @@ const banners = [
         title: "New Arrivals",
         subtitle: "Latest Trends",
         cta: "Explore",
-        image: "/images/Herobanner/B3.jpg",
+        image: "/images/Herobanner/Kids/B1.webp",
     },
     {
         id: 3,
         title: "Summer Sale",
         subtitle: "Everything 30% OFF",
         cta: "Grab Deals",
-        image: "/images/Herobanner/B4.jpg",
+        image: "/images/Herobanner/All/B1.webp",
     },
     {
         id: 4,
         title: "Summer Sale",
         subtitle: "Everything 30% OFF",
         cta: "Hurry Up",
-        image: "/images/Herobanner/B5.jpg",
+        image: "/images/Herobanner/All/B3.webp",
     },
     {
         id: 5,
         title: "Summer Sale",
         subtitle: "Everything 30% OFF",
         cta: "Grab Deals",
-        image: "/images/Herobanner/B6.jpg",
+        image: "/images/Herobanner/Womans/B2.webp",
     },
     {
         id: 6,
@@ -81,7 +81,7 @@ const banners = [
         title: "Summer Sale",
         subtitle: "Everything 30% OFF",
         cta: "Grab Deals",
-        image: "/images/Herobanner/B8.webp",
+        image: "/images/Herobanner/Womans/B1.webp",
     },
     {
         id: 8,
@@ -117,35 +117,6 @@ const HeroBanner = React.memo(function HeroBanner() {
                                     backgroundRepeat: "no-repeat",
                                 }}
                             />
-
-
-                            <div className="relative z-20 w-full max-w-5xl mx-auto px-4 md:px-8 lg:px-16 text-center text-white py-12">
-                                {/* <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-black leading-none mb-8 drop-shadow-2xl bg-linear-to-r from-white via-white/90 to-yellow-200/90 bg-clip-text text-transparent">
-                                    {banner.title}
-                                </h1> */}
-
-                                {/* <Link
-                                    to="/shop"
-                                    className="group inline-block px-12 py-6 bg-white/95 backdrop-blur-xl text-gray-900 text-xl md:text-2xl font-black hover:bg-white transition-all duration-500 shadow-2xl hover:shadow-3xl border-4 border-white/60 hover:border-white hover:scale-110 hover:-translate-y-3 transform-gpu"
-                                >
-                                    <span className="flex items-center justify-center space-x-3">
-                                        <span>{banner.cta}</span>
-                                        <svg
-                                            className="w-7 h-7 group-hover:translate-x-2 transition-all duration-300"
-                                            fill="none"
-                                            stroke="currentColor"
-                                            viewBox="0 0 24 24"
-                                        >
-                                            <path
-                                                strokeLinecap="round"
-                                                strokeLinejoin="round"
-                                                strokeWidth={2}
-                                                d="M17 8l4 4m0 0l-4 4m4-4H3"
-                                            />
-                                        </svg>
-                                    </span>
-                                </Link> */}
-                            </div>
                         </div>
                     </SwiperSlide>
                 ))}

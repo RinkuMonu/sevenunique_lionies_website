@@ -15,6 +15,8 @@ import { AddProductWithVariant } from "./components/admin/addProduct.jsx";
 import ProductDetailPage from "./pages/Productdetail.jsx";
 import PartnerPage from "./pages/Partner.jsx";
 import Faq from "./pages/Faq.jsx";
+import Kids from "./pages/Kids.jsx";
+import BecomeAPartner from "./pages/BecomeAPartner.jsx";
 
 function App() {
   return (
@@ -36,6 +38,8 @@ function App() {
         <Route path="add" element={<AddProductWithVariant />} />
         <Route path="partner" element={<PartnerPage />} />
         <Route path="faq" element={<Faq />} />
+        <Route path="kids" element={<Kids />} />
+        <Route path="becomeapartner" element={<BecomeAPartner />} />
         <Route
           path="*"
           element={

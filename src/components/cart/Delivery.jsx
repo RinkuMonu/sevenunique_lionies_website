@@ -1,72 +1,91 @@
 import { useState } from "react";
 
 const Delivery = () => {
-  const [deliveryType, setDeliveryType] = useState("standard");
+  const [selectedMethod, setSelectedMethod] = useState("standard");
 
-  const options = [
+  const deliveryOptions = [
     {
       id: "standard",
       title: "Standard Delivery",
-      desc: "Delivered in 5–7 business days",
-      price: 0,
-      eta: "Free",
-    },
-    {
-      id: "fast",
-      title: "Fast Delivery",
-      desc: "Delivered in 2–3 business days",
-      price: 99,
-      eta: "₹99",
+      desc: "5-7 business days",
+      price: "FREE",
+      icon: "🚚",
     },
     {
       id: "express",
       title: "Express Delivery",
-      desc: "Delivered in 24 hours",
-      price: 199,
-      eta: "₹199",
+      desc: "2-3 business days",
+      price: "₹99",
+      icon: "⚡",
+    },
+    {
+      id: "pickup",
+      title: "Store Pickup",
+      desc: "Ready in 24 hours",
+      price: "FREE",
+      icon: "🏪",
     },
   ];
 
   return (
-    <div className="bg-white rounded-xl border border-gray-300 p-6">
-      <h3 className="text-lg font-semibold mb-4">Delivery Options</h3>
+    <div className="space-y-6">
+      {/* Header */}
+      <div>
+        <h3 className="text-lg font-semibold text-gray-900 mb-2">Delivery Method</h3>
+        <p className="text-sm text-gray-500">Choose your preferred delivery option</p>
+      </div>
 
-      <div className="space-y-3">
-        {options.map((option) => (
+      {/* Delivery Options */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+        {deliveryOptions.map((option) => (
           <label
             key={option.id}
-            className={`flex items-center justify-between border rounded-xl p-4 cursor-pointer transition
-              ${
-                deliveryType === option.id
-                  ? "border-[#633426] bg-gray-50"
-                  : "border-gray-200 hover:border-gray-400"
-              }`}
+            className={`group cursor-pointer p-4 border border-gray-200 rounded-lg hover:shadow-md transition-all duration-200 flex flex-col items-center text-center space-y-2 ${
+              selectedMethod === option.id
+                ? "border-[#927f68] bg-[#927f68]/5 ring-2 ring-[#927f68]/20 shadow-md"
+                : "hover:border-gray-300"
+            }`}
           >
-            <div className="flex gap-3">
-              <input
-                type="radio"
-                name="delivery"
-                checked={deliveryType === option.id}
-                onChange={() => setDeliveryType(option.id)}
-                className="mt-1 accent-[#633426] cursor-pointer"
-              />
-
-              <div className="text-sm">
-                <p className="font-medium">{option.title}</p>
-                <p className="text-gray-500">{option.desc}</p>
+            <input
+              type="radio"
+              name="delivery"
+              value={option.id}
+              checked={selectedMethod === option.id}
+              onChange={() => setSelectedMethod(option.id)}
+              className="sr-only peer"
+            />
+            <div className="text-2xl">{option.icon}</div>
+            <div className="space-y-1">
+              <div className="font-semibold text-gray-900 group-hover:text-[#927f68] transition-colors">
+                {option.title}
+              </div>
+              <div className="text-xs text-gray-500">{option.desc}</div>
+              <div
+                className={`font-bold text-sm ${
+                  selectedMethod === option.id
+                    ? "text-[#927f68]"
+                    : "text-gray-900"
+                }`}
+              >
+                {option.price}
               </div>
             </div>
-
-            <span className="text-sm font-semibold">
-              {option.price === 0 ? "Free" : `₹${option.price}`}
-            </span>
           </label>
         ))}
       </div>
 
-      {/* INFO */}
-      <div className="mt-4 text-xs text-gray-500">
-        Delivery dates may vary depending on your location and availability.
+      {/* Estimated Delivery */}
+      <div className="bg-blue-50 border border-blue-100 rounded-lg p-4">
+        <p className="text-sm text-blue-800">
+          <span className="font-semibold">Estimated delivery:</span> {(() => {
+            switch (selectedMethod) {
+              case "standard": return "Mar 12 - Mar 14, 2026";
+              case "express": return "Mar 9 - Mar 10, 2026";
+              case "pickup": return "Ready for pickup Mar 7, 2026";
+              default: return "Mar 12 - Mar 14, 2026";
+            }
+          })()}
+        </p>
       </div>
     </div>
   );

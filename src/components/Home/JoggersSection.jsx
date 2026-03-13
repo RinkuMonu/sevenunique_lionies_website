@@ -48,7 +48,7 @@ const joggers = [
 export default function JoggersSection() {
     return (
         <section className="py-12 bg-white">
-            <div className="max-w-7xl mx-auto px-6">
+            <div className="mx-auto px-8">
                 <div className="flex items-center justify-between mb-8">
                     <div>
                         <h2 className="text-2xl md:text-3xl font-bold text-gray-900">Joggers</h2>
@@ -75,7 +75,7 @@ export default function JoggersSection() {
                                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                                     />
 
-                                    <div className="absolute top-3 right-[-80px] group-hover:right-3 transition-all duration-500 flex flex-col gap-1 z-30">
+                                    <div className="absolute top-3 -right-20 group-hover:right-3 transition-all duration-500 flex flex-col gap-1 z-30">
                                         
                                         <div className="relative group/cart">
                                             <div className="bg-white p-2 rounded-full shadow-lg hover:bg-gray-50 transition-colors duration-200">

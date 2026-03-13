@@ -61,115 +61,176 @@ export default function CartOffCanvas({ isOpen, onClose }) {
     [cartItems]
   );
 
+  const tax = useMemo(() => Math.round(subtotal * 0.18), [subtotal]);
   const discount = subtotal > 4000 ? 250 : 0;
   const shipping = subtotal >= 999 || subtotal === 0 ? 0 : 49;
-  const total = subtotal - discount + shipping;
+  const total = subtotal + tax - discount + shipping;
+
+  if (!isOpen) return null;
 
   return (
     <>
-      {isOpen && <div className="fixed inset-0 bg-black/40 z-40" onClick={onClose} />}
+      <div className="fixed inset-0 bg-black/40 z-40" onClick={onClose} />
 
-      <div
-        className={`fixed top-0 left-0 w-full z-50 transform transition-transform duration-500 ${
-          isOpen ? "translate-y-0" : "-translate-y-full"
-        }`}
-      >
-        <div className="bg-white shadow-2xl overflow-hidden">
-          <div className="flex items-center justify-between px-6 py-4 bg-[#927f68]">
-            <div className="flex items-center gap-2 text-white">
-              <ShoppingBag size={20} />
-              <h3 className="text-lg font-semibold">Your Basket</h3>
+      <div className={`fixed left-0 right-0 top-0 z-50 bg-white shadow-2xl overflow-auto h-[calc(100vh-220px)] transform transition-all duration-500 ease-out ${
+        isOpen ? 'translate-y-0' : '-translate-y-full'
+      }`}>
+        <div className="sticky top-0 bg-white border-b border-gray-200 z-10 p-6">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <ShoppingBag size={24} className="text-[#927f68]" />
+              <h2 className="text-xl font-bold text-gray-900">Cart</h2>
             </div>
-
-            <button onClick={onClose} className="bg-white/20 p-2 rounded-full text-white hover:bg-white/30">
-              <X size={18} />
+            <button 
+              onClick={onClose} 
+              className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+              aria-label="Close cart"
+            >
+              <X size={20} className="text-gray-500" />
             </button>
           </div>
+        </div>
 
-          <div className="max-w-6xl mx-auto px-6 py-6">
-            <div className="grid grid-cols-12 gap-6">
-              <div className="col-span-12 lg:col-span-7 space-y-4 max-h-[70vh] overflow-y-auto pr-1">
-                {cartItems.length === 0 && (
-                  <div className="bg-gray-50 p-8 rounded-lg text-center">
-                    <p className="text-gray-600">Your cart is empty.</p>
-                    <Link to="/productlist" onClick={onClose} className="inline-block mt-4 text-[#927f68] font-semibold">
-                      Continue shopping
-                    </Link>
-                  </div>
-                )}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-8 overflow-hidden">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            {/* Items List */}
+            <div className="lg:max-h-full lg:overflow-y-auto pr-0 lg:pr-4 col-span-8">
+              {cartItems.length === 0 ? (
+                <div className="text-center py-20 lg:py-32">
+                  <ShoppingBag size={64} className="mx-auto text-gray-300 mb-6" />
+                  <p className="text-gray-500 text-xl mb-6 font-medium">Your cart is empty</p>
+                  <Link 
+                    to="/productlist" 
+                    onClick={onClose}
+                    className="inline-block bg-[#927f68] text-white px-8 py-4 rounded-2xl font-bold text-lg hover:bg-[#7a6650] transition-all duration-200 shadow-xl hover:shadow-2xl hover:-translate-y-1"
+                  >
+                    Continue Shopping
+                  </Link>
+                </div>
+              ) : (
+                <div className="space-y-4 pt-4">
+                  {cartItems.map((item) => (
+                    <div key={item.lineId} className="group bg-white/50 hover:bg-white p-6  backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 border-b border-[#cccc]">
+                      <div className="flex items-start gap-4 lg:gap-6">
+                        <div className="shrink-0">
+                          <img 
+                            src={item.image} 
+                            className="w-20 h-24 lg:w-24 lg:h-28 rounded-2xl object-cover shadow-lg group-hover:scale-[1.02] transition-transform duration-200" 
+                            alt={item.name} 
+                          />
+                        </div>
 
-                {cartItems.map((item) => (
-                  <div key={item.lineId} className="flex gap-4 bg-gray-50 p-4 shadow-sm rounded-lg">
-                    <img src={item.image} className="w-20 h-20 rounded-lg object-cover" alt={item.name} />
+                        <div className="flex-1 min-w-0">
+                          <h4 className="font-bold text-gray-900 text-base lg:text-lg leading-tight mb-2 lg:mb-3 line-clamp-2">
+                            {item.name}
+                          </h4>
+                          <div className="flex flex-wrap items-center gap-2 mb-4">
+                            <span className="px-3 py-1.5 bg-white/70 backdrop-blur-sm rounded-2xl text-xs lg:text-sm font-semibold text-gray-800 shadow-sm border border-gray-200/50">
+                              Size: {item.size}
+                            </span>
+                            <span className="px-3 py-1.5 bg-white/70 backdrop-blur-sm rounded-2xl text-xs lg:text-sm font-semibold text-gray-800 shadow-sm border border-gray-200/50">
+                              {item.color}
+                            </span>
+                          </div>
+                          
+                          <div className="flex items-center gap-3">
+                            <button
+                              onClick={() => decreaseQty(item.lineId)}
+                              className="w-11 h-11 rounded-2xl border-2 border-gray-200 flex items-center justify-center hover:bg-gray-50 hover:border-[#927f68] transition-all duration-200 text-gray-700 hover:text-[#927f68] shadow-sm hover:shadow-md"
+                            >
+                              <Minus size={18} />
+                            </button>
+                            <span className="w-12 text-center font-bold text-lg text-gray-900 bg-white px-4 py-2 rounded-xl shadow-sm border">
+                              {item.quantity}
+                            </span>
+                            <button
+                              onClick={() => increaseQty(item.lineId)}
+                              className="w-11 h-11 rounded-2xl border-2 border-gray-200 flex items-center justify-center hover:bg-gray-50 hover:border-[#927f68] transition-all duration-200 text-gray-700 hover:text-[#927f68] shadow-sm hover:shadow-md"
+                            >
+                              <Plus size={18} />
+                            </button>
+                          </div>
+                        </div>
 
-                    <div className="flex-1">
-                      <h4 className="font-semibold text-gray-800">{item.name}</h4>
-                      <span className="inline-block mt-1 px-2 py-0.5 text-xs rounded-full bg-[#F5F0DD]">
-                        Size: {item.size} | Color: {item.color}
-                      </span>
-
-                      <div className="flex items-center gap-3 mt-3">
-                        <button
-                          onClick={() => decreaseQty(item.lineId)}
-                          className="w-7 h-7 rounded-full border flex items-center justify-center hover:bg-gray-100"
-                        >
-                          <Minus size={14} />
-                        </button>
-
-                        <span className="font-medium min-w-[20px] text-center">{item.quantity}</span>
-
-                        <button
-                          onClick={() => increaseQty(item.lineId)}
-                          className="w-7 h-7 rounded-full border flex items-center justify-center hover:bg-gray-100"
-                        >
-                          <Plus size={14} />
-                        </button>
+                        <div className="flex flex-col items-end gap-3 shrink-0 ml-4">
+                          <div className="font-bold text-xl lg:text-2xl text-gray-900 leading-none">
+                            ₹{(Number(item.price) * Number(item.quantity)).toLocaleString()}
+                          </div>
+                          <button 
+                            onClick={() => removeItem(item.lineId)}
+                            className="text-sm lg:text-base text-red-500 hover:text-red-600 font-semibold hover:underline transition-colors opacity-0 group-hover:opacity-100 group-hover:translate-y-1 duration-200"
+                          >
+                            Remove
+                          </button>
+                        </div>
                       </div>
                     </div>
+                  ))}
+                </div>
+              )}
+            </div>
 
-                    <div className="text-right">
-                      <div className="font-semibold text-gray-800">Rs. {Number(item.price) * Number(item.quantity)}</div>
-                      <button onClick={() => removeItem(item.lineId)} className="text-xs text-red-500 mt-2 hover:underline">
-                        Remove
-                      </button>
-                    </div>
+            <div className="col-span-4 lg:sticky lg:top-4 lg:self-start  bg-linear-to-b from-white/90 via-white/70 to-gray-50/80 backdrop-blur-xl border border-gray-100/50 rounded-3xl p-8 shadow-2xl lg:shadow-none lg:border-none">
+              <h3 className="text-2xl lg:text-xl font-black text-gray-900 mb-8 tracking-tight">Order Summary</h3>
+              
+              <div className="space-y-4 mb-5">
+                <div className="flex justify-between py-1 border-b border-gray-100">
+                  <span className="text-[14px] text-gray-700 font-semibold">Subtotal</span>
+                  <span className="text-[13px] font-black text-gray-900">₹{subtotal.toLocaleString()}</span>
+                </div>
+                <div className="flex justify-between py-1 border-b border-gray-100">
+                  <span className="text-[14px] text-gray-700 font-semibold">Tax (GST)</span>
+                  <span className="text-[13px] font-black text-gray-900">₹{tax.toLocaleString()}</span>
+                </div>
+                {discount > 0 && (
+                  <div className="flex justify-between py-1 border-b border-gray-100 bg-green-50 rounded-2xl p-4 -mx-4">
+                    <span className="text-[14px] font-semibold text-green-800">Discount</span>
+                    <span className="text-[13px] font-black text-green-600">-₹{discount.toLocaleString()}</span>
                   </div>
-                ))}
+                )}
+                <div className="flex justify-between py-1 border-b border-gray-100">
+                  <span className="text-[14px] text-gray-700 font-semibold">Shipping</span>
+                  <span className="text-[13px] font-black text-gray-900">
+                    {shipping === 0 ? "Free" : `₹${shipping.toLocaleString()}`}
+                  </span>
+                </div>
               </div>
 
-              <div className="col-span-12 lg:col-span-5">
-                <div className="bg-white border border-gray-200 rounded-md shadow-sm p-6 sticky top-24 space-y-4">
-                  <h3 className="text-lg font-semibold text-gray-800">Order Summary</h3>
+              <div className="mb-3">
+                <div className="flex justify-between items-baseline mb-1">
+                  <span className="text-[15px] font-black text-gray-900">Total</span>
+                  <span className="text-[18px] lg:text-[15px] font-black bg-linear-to-r from-[#927f68] to-[#A68A6D] bg-clip-text text-transparent tracking-tight">
+                    ₹{total.toLocaleString()}
+                  </span>
+                </div>
+                <p className="text-sm text-gray-600">Estimated delivery by 25 Apr 2026</p>
+              </div>
 
-                  <div className="flex justify-between text-sm">
-                    <span className="text-gray-600">Subtotal</span>
-                    <span>Rs. {subtotal}</span>
-                  </div>
+              {/* CTA Button */}
+              <Link
+                to="/checkout"
+                onClick={onClose}
+                className={`block w-full text-center py-3 px-8 rounded-md text-base transition-all duration-300 ${
+                  cartItems.length 
+                    ? "bg-linear-to-r from-[#927f68] to-[#A68A6D] text-white hover:-translate-y-0.5" 
+                    : "bg-gray-200 text-gray-400 cursor-not-allowed shadow-none"
+                }`}
+              >
+                {cartItems.length ? 'Proceed to Checkout →' : 'Proceed to Checkout'}
+              </Link>
 
-                  <div className="flex justify-between text-sm text-green-600">
-                    <span>Discount</span>
-                    <span>- Rs. {discount}</span>
-                  </div>
-
-                  <div className="flex justify-between text-sm">
-                    <span className="text-gray-600">Shipping</span>
-                    <span>{shipping === 0 ? "Free" : `Rs. ${shipping}`}</span>
-                  </div>
-
-                  <div className="border-t pt-3 flex justify-between text-lg font-semibold">
-                    <span>Total</span>
-                    <span>Rs. {total}</span>
-                  </div>
-
-                  <Link
-                    to="/checkout"
-                    onClick={onClose}
-                    className={`block text-center w-full py-3 rounded-xl font-semibold text-white ${
-                      cartItems.length ? "bg-[#927f68]" : "bg-gray-400 pointer-events-none"
-                    }`}
-                  >
-                    Proceed to Checkout
-                  </Link>
+              {/* Coupon Section */}
+              <div className="mt-8 pt-8 border-t border-gray-100">
+                <label className="block text-sm font-semibold text-gray-700 mb-3">Have a Coupon?</label>
+                <div className="flex gap-3">
+                  <input
+                    type="text"
+                    placeholder="Enter coupon code"
+                    className="flex-1 px-5 py-4 border-2 border-gray-200 rounded-md text-base placeholder-gray-400 focus:outline-none focus:ring-4 focus:ring-[#927f68]/20 focus:border-[#927f68] transition-all duration-200 shadow-sm"
+                  />
+                  <button className="text-center py-3 px-8 rounded-md text-base transition-all duration-300 bg-[#927f68] hover:bg-[#7a6650] text-white font-bold shadow-xl hover:shadow-2xl hover:-translate-y-0.5 whitespace-nowrap">
+                    Apply
+                  </button>
                 </div>
               </div>
             </div>

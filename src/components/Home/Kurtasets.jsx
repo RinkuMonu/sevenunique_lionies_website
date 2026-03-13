@@ -73,7 +73,7 @@ const trends = [
 export default function DesignerShirts() {
   return (
     <section className="py-16 bg-linear-to-b from-white via-gray-50 to-white">
-      <div className="max-w-7xl mx-auto px-6">
+      <div className="mx-auto px-8">
       <div className="flex items-center justify-between mb-8">
           <div>
             <h2 className="text-2xl md:text-3xl font-bold text-gray-900">

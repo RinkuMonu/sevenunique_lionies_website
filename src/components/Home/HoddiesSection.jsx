@@ -56,7 +56,7 @@ export default function HoddiesSection() {
   return (
     <>
       <section className="pb-10 bg-white">
-        <div className="max-w-7xl mx-auto px-6">
+        <div className="mx-auto px-8">
           <div className="flex items-center justify-between mb-12">
             <div>
               <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">
